@@ -26,12 +26,20 @@
     <!-- TODO: Create the 'main' content area. -->
      <main>
             <section>
-                <form>
-                    <h2>Add a New Week</h2>
-            <label>Add:</label>
-            <input type:"Add" placeholder="Add Week Form">
-            <label>Edit:</label>
-            <input type:"Edit" placeholder="Edit Week Form">
+                <h2>Add a new week</h2>
+                <form id="week-form" action="#">
+                    <fieldset>
+                        <legend>Weekly Details</legend>
+                    <label>Week Title</label>
+                    <input id="week-title" type="text" required placeholder="Write Week title">
+                    <label>Week start date</label>
+                   <input id="week start date" type="date" required placeholder="Add Date">
+                   <label>Week's Description</label>
+                   <trextarea id="week description" rows="5"></trextarea>
+            <label>Week Links</label>
+            <textarea id="week-links" rows="3"></textarea>
+            <button id="add week" type="submit" text="add week"></button>
+                    </fieldset>
         </form>
         </section>
      </main>
