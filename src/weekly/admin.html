@@ -17,8 +17,6 @@
     <!-- TODO: Link to your CSS framework or stylesheet. -->
      <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-
     <!-- TODO: Create a 'header' with a main heading ('h1') "Manage Weekly Breakdown". -->
 <header>
    <h1>Manage Weekly Breakdown</h1>
@@ -56,7 +54,6 @@
                     </fieldset>
         </form>
         </section>
-     </main>
         <!-- Section 1: Add/Edit Week Form -->
         <!-- TODO: Create a 'section' for the form. -->
             <!-- TODO: Add a sub-heading ('h2') "Add a New Week". -->
@@ -91,9 +88,36 @@
 
         <!-- Section 2: Existing Weekly Entries -->
         <!-- TODO: Create a 'section' to display the list of current weeks. -->
+<section>
             <!-- TODO: Add a sub-heading ('h2') "Current Weekly Breakdown". -->
-
+<h2>Current Week Breackdown</h2>
             <!-- TODO: Create a 'table' with id "weeks-table". -->
+             <table id="weeks-table">
+<thead>
+    <tr>
+        <th>Week Title</th>
+        <th>Description</th>
+        <th>Action</th>
+    </tr>
+</thead>
+<tbody>
+    <tr border="1px">
+        First Week
+        <td>Week1:intro to HTML</td>
+        <td>Description:</td>
+    </tr>
+    <tr>
+        Second Week
+        <td>Week2:intro to CSS</td>
+        <td>Description:</td>
+    </tr>
+    <tr>
+        <td><button value="Edit">Edit</button></td>
+        <td><button value="Delete">Delete</button></td>
+    </tr>
+</tbody>
+             </table>
+             </section>
                 <!-- TODO: Create a 'thead' and a 'tr' inside it. -->
                     <!-- TODO: Add 'th' elements for "Week Title", "Description", and "Actions". -->
                 
@@ -112,8 +136,7 @@
                 <!-- End of tbody. -->
             <!-- End of table. -->
         <!-- End of list section. -->
-
     <!-- End of main. -->
-</body>
+     </main>
 </html>
 
