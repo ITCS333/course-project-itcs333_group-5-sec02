@@ -18,10 +18,12 @@
      <link rel="stylesheet" href="styles.css">
 </head>
     <!-- TODO: Create a 'header' with a main heading ('h1') "Manage Weekly Breakdown". -->
-<header>
+    <!-- TODO: Create the 'main' content area. -->
+    ///add body tag --- need to review
+    <body>
+        <header>
    <h1>Manage Weekly Breakdown</h1>
 </header>
-    <!-- TODO: Create the 'main' content area. -->
      <main>
             <section>
                 <h2>Add a new week</h2>
@@ -29,27 +31,19 @@
                     <fieldset>
                         <legend>Weekly Details</legend>
                         <br>
-                        <div>
                     <label>Week Title</label>
                     <input id="week-title" type="text" required placeholder="Write Week title">
-                    </div>
                     <br>
-                    <div>
                     <label>Week start date</label>
-                   <input id="week start date" type="date" required placeholder="Add Date">
-                   </div>
+                   <input id="week-start-date" type="date" required placeholder="Add Date">
                    <br>
-                   <div>
                    <label>Week's Description</label>
-                   <trextarea id="week description" rows="5"></trextarea>
-                   </div>
+                   <textarea id="week-description" rows="5"></trextarea>
                    <br>
-                   <div>
             <label>Week Links</label>
             <textarea id="week-links" rows="3"></textarea>
-                   </div>
                    <br>
-            <button id="add week" type="submit" text="add week"></button>
+            <button id="add-week" type="submit">Add Week</button>
             <input type="submit" value="submit">
                     </fieldset>
         </form>
@@ -102,7 +96,7 @@
 </thead>
 <tbody>
     <tr border="1px">
-        First Week
+        <td>First Week</td> //need to review
         <td>Week1:intro to HTML</td>
         <td>Description:</td>
     </tr>
@@ -138,5 +132,6 @@
         <!-- End of list section. -->
     <!-- End of main. -->
      </main>
+    </body>
 </html>
 
