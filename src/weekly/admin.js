@@ -3,7 +3,7 @@
 
   Instructions:
   1. Link this file to `admin.html` using:
-     <script src="admin.js" defer></script>
+     <script src="admin.js" defer></script> ---done
   
   2. In `admin.html`, add an `id="weeks-tbody"` to the <tbody> element
      inside your `weeks-table`.
@@ -19,6 +19,8 @@ let weeks = [];
 // TODO: Select the week form ('#week-form').
 
 // TODO: Select the weeks table body ('#weeks-tbody').
+let form = document.getElementById("week-form");
+let tbody = document.getElementById("weeks-tbody");
 
 // --- Functions ---
 
@@ -34,6 +36,35 @@ let weeks = [];
  */
 function createWeekRow(week) {
   // ... your implementation here ...
+  // 
+let week={ id , title , description }
+let tr=document.createElement("tr");
+
+let tdtitle=document.createElement("td");
+tdtitle.textContant=week.title;
+
+let tddescription=document.createElement("td");
+tddescription.textContant=week.description;
+
+let tdbutton=document.createElement("td");
+let editbutton=document.createElement("button");
+editbutton.textContant="Edit";
+editbutton.classList.add("edit-btn");
+editbutton.setAttribute("data-id", week.id);
+
+let deletebutton=document.createElement("button");
+deletebutton.textContant="delete";
+deletebutton.classList.add("delete-btn");
+deletebutton.setAttribute("data-id" , week.id);
+
+tdbutton.appendChild(editbutton);
+tdbutton.appendChild(deletebutton);
+
+tr.appendChild(tdtitle);
+tr.appendChild(tddescription);
+tr.appendChild(tdbutton);
+
+return tr;
 }
 
 /**
@@ -46,6 +77,11 @@ function createWeekRow(week) {
  */
 function renderTable() {
   // ... your implementation here ...
+ tbody.innerHTML = ""; 
+  for(let i=0  ; i<weeks.length ; i++){
+let weekrow = createWeekRow(weeks[i]);
+tbody.appendChild(weekrow);
+  }
 }
 
 /**
@@ -63,7 +99,29 @@ function renderTable() {
  */
 function handleAddWeek(event) {
   // ... your implementation here ...
-}
+  event.preventDefault();
+
+    let t = document.getElementById('week-title').value.trim();
+    let sd = document.getElementById('week-start-date').value;
+    let d = document.getElementById('week-description').value.trim();
+
+    let weekslink = document.getElementById('week-links').value;
+    let links1 = weekslink.split('\n');
+    links = [] ;
+
+    let newweek = {
+      id : `week_${Date.now()}` ,
+      title : title ,
+      startDate : startDate ,
+      description : description ,
+      links : links1
+     };
+
+weeks.push(newweek);
+renderTable();
+event.target.reset();
+    }
+
 
 /**
  * TODO: Implement the handleTableClick function.
@@ -77,6 +135,12 @@ function handleAddWeek(event) {
  */
 function handleTableClick(event) {
   // ... your implementation here ...
+  if(event.target.classList.contains('delete-btn')){
+    let date = event.target.getAttribute('date-id');
+    weeks = weeks.filter(week => week.id!==weekId)
+      renderTable();
+  }
+
 }
 
 /**
@@ -91,6 +155,13 @@ function handleTableClick(event) {
  */
 async function loadAndInitialize() {
   // ... your implementation here ...
+  let response = await fetch('weeks.json');
+  weeks= await response.json();
+
+  renderTable();
+
+  form.addEventListener('submit', handleAddWeek);
+  tbody.addEventListener('click' , handleTableClick);
 }
 
 // --- Initial Page Load ---
