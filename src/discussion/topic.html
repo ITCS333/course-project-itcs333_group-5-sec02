@@ -64,24 +64,37 @@
                             </div>
                 <!-- End of reply article. -->
                 </article>
+            </div>
 
         <!-- Section 3: Add a Reply Form -->
         <!-- TODO: Create a 'section' for the reply form. -->
+         <section id="reply-form-section">
             <!-- TODO: Add a sub-heading ('h2') "Post a Reply". -->
+            <h2>Post a Reply</h2>
             <!-- TODO: Create a 'form' for users to post new replies. Action can be '#'. -->
+                <form action="#" method="post">
                 <!-- TODO: Use a 'fieldset' to group the controls. -->
+                <fieldset>
                     <!-- TODO: Add a 'legend', e.g., "Your Reply". -->
+                    <legend>Your Reply</legend>
 
                     <!-- TODO: Add a 'label' and 'textarea' for the reply message.
                          - label 'for': "new-reply"
                          - textarea 'id': "new-reply", required -->
+                    <label for="new-reply">Message:</label>
+                    <textarea id="new-reply" name="new-reply" required></textarea>
                     
                     <!-- TODO: Add a 'button' to submit the reply.
                          - type="submit", Text: "Post Reply" -->
+                    <button type="submit">Post Reply</button>
                 <!-- End of fieldset. -->
+                </fieldset>
             <!-- End of form. -->
+            </form>
         <!-- End of replies section. -->
+        </section>
 
     <!-- End of main. -->
+    </main>
 </body>
 </html>
