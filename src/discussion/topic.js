@@ -4,7 +4,6 @@
   Instructions:
   1. Link this file to `topic.html` using:
      <script src="topic.js" defer></script>
-
   2. In `topic.html`, add the following IDs:
      - To the <h1>: `id="topic-subject"`
      - To the <article id="original-post">:
