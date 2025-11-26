@@ -127,7 +127,19 @@ function renderReplies() {
  * 7. Clear the `newReplyText` textarea.
  */
 function handleAddReply(event) {
+  event.preventDefault();
+  const replyText = newReplyText.value.trim();
+  if (replyText === '') return;
+  const newReply = {
+    id:'reply_' + Date.now(),
+    renderReplies: 'Student',
+    date: new Date().toISOString().split('T')[0],
+    text: replyText
   // ... your implementation here ...
+};
+  currentReplies.push(newReply);
+  renderReplies();
+  newReplyText.value = '';
 }
 
 /**
@@ -141,6 +153,11 @@ function handleAddReply(event) {
  * 4. Call `renderReplies()` to refresh the list.
  */
 function handleReplyListClick(event) {
+  if (event.target.classList.contains('delete-reply-btn')) {
+    const replyId = event.target.dataset.id;
+    currentReplies = currentReplies.filter(reply => reply.id !== replyId);
+    renderReplies();
+  }
   // ... your implementation here ...
 }
 
