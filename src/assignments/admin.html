@@ -9,6 +9,7 @@
 <html lang="en">
 
 <head>
+    <script src="admin.js" defer></script>
     <!-- TODO: Add the 'meta' tag for character encoding (UTF-8). -->
     <meta charset="UTF-8">
     <!-- TODO: Add the responsive 'viewport' meta tag. -->
@@ -98,7 +99,7 @@
                     </thead>
 
                     <!-- TODO: Create a 'tbody' for the data. -->
-                    <tbody>
+                    <tbody id="assignments-tbody">
                         <!-- TODO: Add 1-2 rows of dummy data to see the structure. -->
 
                         <!-- Example Row 1: -->
@@ -111,9 +112,9 @@
                             <!-- TODO: Add a 'td' containing the action buttons. -->
                             <td>
                                 <!-- TODO: Add an "Edit" button. -->
-                                <button>Edit</button>
+                                <button class="edit-btn" data-id="asg1">Edit</button>
                                 <!-- TODO: Add a "Delete" button. -->
-                                <button>Delete</button>
+                                <button class="delete-btn" data-id="asg1">Delete</button>
                             </td>
                             <!-- End of actions 'td'. -->
                         </tr>
@@ -121,11 +122,11 @@
 
                         <!-- Example Row 2: -->
                         <tr>
-                            <td>CSS Baeics</td>
+                            <td>CSS Basics</td>
                             <td>2025-11-29</td>
                             <td>
-                                <button>Edit</button>
-                                <button>Delete</button>
+                                <button class="edit-btn" data-id="asg2">Edit</button>
+                                <button class="delete-btn" data-id="asg2">Delete</button>
                             </td>
                         </tr>
 
