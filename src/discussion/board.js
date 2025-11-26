@@ -17,8 +17,10 @@ let topics = [];
 
 // --- Element Selections ---
 // TODO: Select the new topic form ('#new-topic-form').
+const newTopicForm = document.getElementById('new-topic-form');
 
 // TODO: Select the topic list container ('#topic-list-container').
+const topicListContainer = document.getElementById('topics-list-container');
 
 // --- Functions ---
 
@@ -32,6 +34,28 @@ let topics = [];
  * - The "Delete" button should have a class "delete-btn" and `data-id="${id}"`.
  */
 function createTopicArticle(topic) {
+  const article = document.createElement('article');
+  const topicLink = document.createElement('a');
+  topicLink.href = `topic.html?id=${topic.id}`;
+  topicLink.textContent = topic.subject;
+  article.appendChild(topicLink);
+
+  const footer = document.createElement('footer');
+  footer.textContent = `Posted by: ${topic.author} on ${topic.date}`;
+  article.appendChild(footer);
+  const actionsDiv = document.createElement('div');
+  actionsDiv.classList.add('post-actions');
+  const editBtn = document.createElement('button');
+  editBtn.textContent = 'Edit';
+  actionsDiv.appendChild(editBtn);
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Delete';
+  deleteBtn.classList.add('delete-btn');
+  deleteBtn.dataset.id = topic.id;
+  actionsDiv.appendChild(deleteBtn);
+  article.appendChild(actionsDiv);
+  return article;
+
   // ... your implementation here ...
 }
 
@@ -44,6 +68,11 @@ function createTopicArticle(topic) {
  * append the resulting <article> to `topicListContainer`.
  */
 function renderTopics() {
+  topicListContainer.innerHTML = '';
+  topics.forEach(topic => {
+    const topicArticle = createTopicArticle(topic);
+    topicListContainer.appendChild(topicArticle);
+  });
   // ... your implementation here ...
 }
 
