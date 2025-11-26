@@ -21,7 +21,12 @@ let currentReplies = []; // Will hold replies for *this* topic
 
 // --- Element Selections ---
 // TODO: Select all the elements you added IDs for in step 2.
-
+const topicSubject = document.getElementById('topic-subject');
+const opMessage = document.getElementById('op-message');
+const opFooter = document.getElementById('op-footer');
+const replyListContainer = document.getElementById('reply-list-container');
+const replyForm = document.getElementById('reply-form');
+const newReplyText = replyForm.querySelector('textarea[name="reply-text"]');
 // --- Functions ---
 
 /**
@@ -32,6 +37,9 @@ let currentReplies = []; // Will hold replies for *this* topic
  * 3. Return the id.
  */
 function getTopicIdFromURL() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  return urlParams.get('id');
   // ... your implementation here ...
 }
 
@@ -45,6 +53,16 @@ function getTopicIdFromURL() {
  * 4. (Optional) Add a "Delete" button with `data-id="${topic.id}"` to the OP.
  */
 function renderOriginalPost(topic) {
+  topicSubject.textContent = topic.subject;
+  opMessage.textContent = topic.message;
+  opFooter.textContent = `Posted by: ${topic.author} on ${topic.date}`;
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.dataset.id = topic.id;
+  deleteBtn.classList.add("delete-topic-btn");
+
+  document.getElementById("original-post").appendChild(deleteBtn);
   // ... your implementation here ...
 }
 
@@ -57,6 +75,19 @@ function renderOriginalPost(topic) {
  * - Include a "Delete" button with class "delete-reply-btn" and `data-id="${id}"`.
  */
 function createReplyArticle(reply) {
+  const article = document.createElement("article");
+  const p = document.createElement("p");
+  p.textContent = reply.text;
+  const footer = document.createElement("footer");
+  footer.textContent = `Posted by: ${reply.author} on ${reply.date}`;
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.classList.add("delete-reply-btn");
+  deleteBtn.dataset.id = reply.id;
+  article.appendChild(p);
+  article.appendChild(footer);
+  article.appendChild(deleteBtn);
+  return article;
   // ... your implementation here ...
 }
 
