@@ -13,13 +13,14 @@
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <title>Week Details</title>
      <link rel="stylesheet" href="styles.css">
+     <script src="details.js" defer></script>
 </head>
 <body>
     <!-- TODO: Create a 'header' with a main heading ('h1'). Use a dummy title like "Week 1: Introduction to HTML". -->
 
     <!-- TODO: Create the 'main' content area. -->
 <header>
-            <h1>Week1:introduction to html</h1>
+            <h1 id="week-title">Week1:introduction to html</h1>
             <main>
         <!-- Section 1: Weekly Information -->
         <!-- TODO: Use an 'article' to display the main weekly information. -->
@@ -27,9 +28,9 @@
             <!-- TODO: Add a sub-heading ('h2') "Description & Notes". -->
             <!-- TODO: Add a paragraph ('p') with dummy text for the week's detailed notes. -->
 <article>
-    <p>Start on: 8 Oct 2025 </p>
+    <p id="week-start-date">Start on: 8 Oct 2025 </p>
     <h2>Description and Notes:</h2>
-    <p>This week covers HTML Basices such as paragraphs , heading ,..etc , and examples & resources which will help you understand how to code using HTML.</p>
+    <p id="week-description">This week covers HTML Basices such as paragraphs , heading ,..etc , and examples & resources which will help you understand how to code using HTML.</p>
             <!-- TODO: Add another sub-heading ('h2') "Exercises & Resources". -->
             <!-- TODO: Use an unordered list ('ul') to display the links for the week. -->
                 <!-- TODO: Add list items ('li') with anchor tags ('a') for each resource. Use dummy links for now. -->
@@ -37,7 +38,7 @@
             <!-- End of the list. -->
         <!-- End of article. -->
          <h2>Exercises and Rescources:</h2>
-         <ul>
+         <ul id="week-links-list">
             <li><a href="#">Exercise#1 - Basic Tages</a></li>
             <li><a href="#">Exercise#2 - Forms and tables</a></li>
             <li><a href="#">Resource#1 - HTML Cheat Sheet</a></li> 
@@ -58,7 +59,7 @@
                     <!-- TODO: Use a 'footer' to show the author (e.g., "Posted by: John Doe"). -->
                 <!-- End of comment article. -->
                 <section id="Existing Comments"></section>
-            <div>
+            <div id="comment-list">
                 <article class="comment">
                     <p>I have a question about the 'header' tag</p>
                     <footer>Posted by: John Doe</footer>
@@ -81,11 +82,11 @@
                     
                     <!-- TODO: Add a 'button' to submit the comment.
                          - type="submit", Text: "Post Comment" -->
-                         <form action="#">
+                         <form action="#" id="comment-form">
                             <fieldset>
                                 <legend>Ask a question</legend>
                                 <label for="new-comment">New Comment</label><br>
-                                <textarea id="new-comment" name="new-comment "required></textarea><br>
+                                <textarea id="new-comment-text" name="new-comment "required></textarea><br>
                                 <button type="submit" value="submit">Post Comment</button>
                             </fieldset>
                          </form>
