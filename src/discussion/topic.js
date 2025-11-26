@@ -4,7 +4,6 @@
   Instructions:
   1. Link this file to `topic.html` using:
      <script src="topic.js" defer></script>
-
   2. In `topic.html`, add the following IDs:
      - To the <h1>: `id="topic-subject"`
      - To the <article id="original-post">:
@@ -22,7 +21,12 @@ let currentReplies = []; // Will hold replies for *this* topic
 
 // --- Element Selections ---
 // TODO: Select all the elements you added IDs for in step 2.
-
+const topicSubject = document.getElementById('topic-subject');
+const opMessage = document.getElementById('op-message');
+const opFooter = document.getElementById('op-footer');
+const replyListContainer = document.getElementById('reply-list-container');
+const replyForm = document.getElementById('reply-form');
+const newReplyText = replyForm.querySelector('textarea[name="reply-text"]');
 // --- Functions ---
 
 /**
@@ -33,6 +37,9 @@ let currentReplies = []; // Will hold replies for *this* topic
  * 3. Return the id.
  */
 function getTopicIdFromURL() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  return urlParams.get('id');
   // ... your implementation here ...
 }
 
@@ -46,6 +53,16 @@ function getTopicIdFromURL() {
  * 4. (Optional) Add a "Delete" button with `data-id="${topic.id}"` to the OP.
  */
 function renderOriginalPost(topic) {
+  topicSubject.textContent = topic.subject;
+  opMessage.textContent = topic.message;
+  opFooter.textContent = `Posted by: ${topic.author} on ${topic.date}`;
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.dataset.id = topic.id;
+  deleteBtn.classList.add("delete-topic-btn");
+
+  document.getElementById("original-post").appendChild(deleteBtn);
   // ... your implementation here ...
 }
 
@@ -58,6 +75,19 @@ function renderOriginalPost(topic) {
  * - Include a "Delete" button with class "delete-reply-btn" and `data-id="${id}"`.
  */
 function createReplyArticle(reply) {
+  const article = document.createElement("article");
+  const p = document.createElement("p");
+  p.textContent = reply.text;
+  const footer = document.createElement("footer");
+  footer.textContent = `Posted by: ${reply.author} on ${reply.date}`;
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.classList.add("delete-reply-btn");
+  deleteBtn.dataset.id = reply.id;
+  article.appendChild(p);
+  article.appendChild(footer);
+  article.appendChild(deleteBtn);
+  return article;
   // ... your implementation here ...
 }
 
@@ -70,6 +100,11 @@ function createReplyArticle(reply) {
  * append the resulting <article> to `replyListContainer`.
  */
 function renderReplies() {
+  replyListContainer.innerHTML = '';
+  currentReplies.forEach(reply => {
+    const replyArticle = createReplyArticle(reply);
+    replyListContainer.appendChild(replyArticle);
+  });
   // ... your implementation here ...
 }
 
@@ -92,7 +127,19 @@ function renderReplies() {
  * 7. Clear the `newReplyText` textarea.
  */
 function handleAddReply(event) {
+  event.preventDefault();
+  const replyText = newReplyText.value.trim();
+  if (replyText === '') return;
+  const newReply = {
+    id:'reply_' + Date.now(),
+    renderReplies: 'Student',
+    date: new Date().toISOString().split('T')[0],
+    text: replyText
   // ... your implementation here ...
+};
+  currentReplies.push(newReply);
+  renderReplies();
+  newReplyText.value = '';
 }
 
 /**
@@ -106,6 +153,11 @@ function handleAddReply(event) {
  * 4. Call `renderReplies()` to refresh the list.
  */
 function handleReplyListClick(event) {
+  if (event.target.classList.contains('delete-reply-btn')) {
+    const replyId = event.target.dataset.id;
+    currentReplies = currentReplies.filter(reply => reply.id !== replyId);
+    renderReplies();
+  }
   // ... your implementation here ...
 }
 
@@ -128,6 +180,27 @@ function handleReplyListClick(event) {
  * 8. If the topic is not found, display an error in `topicSubject`.
  */
 async function initializePage() {
+  currentTopicId = getTopicIdFromURL();
+  if (!currentTopicId) {
+    topicSubject.textContent = "Topic not found.";
+    return;
+  }
+  const [topicsRes, repliesRes] = await Promise.all([
+    fetch('topics.json'),
+    fetch('replies.json')
+  ]);
+  const topicsData = await topicsRes.json();
+  const repliesData = await repliesRes.json();
+  const topic = topicsData.find(t => t.id === currentTopicId);
+  currentReplies = repliesData[currentTopicId] || [];
+  if (topic) {
+    renderOriginalPost(topic);
+    renderReplies();
+    replyForm.addEventListener('submit', handleAddReply);
+    replyListContainer.addEventListener('click', handleReplyListClick);
+  } else {
+    topicSubject.textContent = "Topic not found.";
+  }
   // ... your implementation here ...
 }
 
