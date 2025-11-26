@@ -100,6 +100,11 @@ function createReplyArticle(reply) {
  * append the resulting <article> to `replyListContainer`.
  */
 function renderReplies() {
+  replyListContainer.innerHTML = '';
+  currentReplies.forEach(reply => {
+    const replyArticle = createReplyArticle(reply);
+    replyListContainer.appendChild(replyArticle);
+  });
   // ... your implementation here ...
 }
 
