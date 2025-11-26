@@ -129,7 +129,7 @@ function handleTopicListClick(event) {
     topics = topics.filter(topic => topic.id !== topicId);
     renderTopics();
   }
-  
+
   // ... your implementation here ...
 }
 
@@ -144,6 +144,11 @@ function handleTopicListClick(event) {
  * 5. Add the 'click' event listener to `topicListContainer` (calls `handleTopicListClick`).
  */
 async function loadAndInitialize() {
+  const response = await fetch('topics.json');
+  topics = await response.json();
+  renderTopics();
+  newTopicForm.addEventListener('submit', handleCreateTopic);
+  topicListContainer.addEventListener('click', handleTopicListClick);
   // ... your implementation here ...
 }
 
