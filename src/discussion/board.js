@@ -95,6 +95,21 @@ function renderTopics() {
  * 6. Reset the form.
  */
 function handleCreateTopic(event) {
+  event.preventDefault();
+  const subjectInput = document.getElementById('topic-subject');
+  const messageInput = document.getElementById('topic-message');
+  const newTopic = {
+    id: `topic_${Date.now()}`,
+    subject: subjectInput.value,
+    message: messageInput.value,
+    author: 'Student',
+    date: new Date().toISOString().split('T')[0]
+  };
+  topics.push(newTopic);
+  renderTopics();
+  newTopicForm.reset();
+ 
+
   // ... your implementation here ...
 }
 
