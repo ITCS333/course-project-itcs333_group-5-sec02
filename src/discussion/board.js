@@ -124,6 +124,12 @@ function handleCreateTopic(event) {
  * 4. Call `renderTopics()` to refresh the list.
  */
 function handleTopicListClick(event) {
+  if (event.target.classList.contains('delete-btn')) {
+    const topicId = event.target.dataset.id;
+    topics = topics.filter(topic => topic.id !== topicId);
+    renderTopics();
+  }
+  
   // ... your implementation here ...
 }
 
