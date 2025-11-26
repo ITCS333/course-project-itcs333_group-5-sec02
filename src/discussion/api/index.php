@@ -123,18 +123,28 @@ require_once '../config/database.php';
 
 // TODO: Get the PDO database connection
 // $db = $database->getConnection();
+$database = new Database();
+$db = $database->getConnection();
 
 
 // TODO: Get the HTTP request method
 // Use $_SERVER['REQUEST_METHOD']
+$method = $_SERVER['REQUEST_METHOD'];
 
 
 // TODO: Get the request body for POST and PUT requests
 // Use file_get_contents('php://input') to get raw POST data
 // Decode JSON data using json_decode()
+$inputData = null;
+if ($method === 'POST' || $method === 'PUT') {
+    $rawData = file_get_contents('php://input');
+    $inputData = json_decode($rawData, true);
+}
 
 
 // TODO: Parse query parameters for filtering and searching
+$resource = isset($_GET['resource']) ? $_GET['resource'] : null;
+
 
 
 // ============================================================================
@@ -151,12 +161,17 @@ require_once '../config/database.php';
  *   - order: Optional sort order (asc or desc, default: desc)
  */
 function getAllTopics($db) {
+    $sql = "SELECT topic_id, subject, message, author, DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at FROM topics";
     // TODO: Initialize base SQL query
+    
+
     // Select topic_id, subject, message, author, and created_at (formatted as date)
     
     // TODO: Initialize an array to hold bound parameters
     
+    
     // TODO: Check if search parameter exists in $_GET
+
     // If yes, add WHERE clause using LIKE for subject, message, OR author
     // Add the search term to the params array
     
@@ -257,25 +272,63 @@ function createTopic($db, $data) {
 function updateTopic($db, $data) {
     // TODO: Validate that topic_id is provided
     // If not provided, return error with 400 status
+    if (empty($data['topic_id'])) {
+        sendResponse(['error' => 'topic_id is required'], 400);
+    }
     
     // TODO: Check if topic exists
+    $topicId = $data['topic_id'];
     // Prepare and execute a SELECT query
     // If not found, return error with 404 status
+    $stmt = $db->prepare("SELECT * FROM topics WHERE topic_id = :topic_id");
+    $stmt->bindParam(':topic_id', $topicId);
+    $stmt->execute();
+    if ($stmt->rowCount() === 0) {
+        sendResponse(['error' => 'Topic not found'], 404);
+    }
     
     // TODO: Build UPDATE query dynamically based on provided fields
     // Only update fields that are provided in the request
+    $updates = [];
+    $params = [':topic_id' => $topicId];
+    if (isset($data['subject'])) {
+        $updates[] = "subject = :subject";
+        $params[':subject'] = $data['subject'];
+    }
+    if (isset($data['message'])) {
+        $updates[] = "message = :message";
+        $params[':message'] = $data['message'];
+    }
     
     // TODO: Check if there are any fields to update
     // If $updates array is empty, return error
+    if (empty($updates)) {
+        sendResponse(['error' => 'No fields to update'], 400);
+    }
     
     // TODO: Complete the UPDATE query
+    $sql = "UPDATE topics SET " . implode(", ", $updates) . " WHERE topic_id = :topic_id";
+
     
     // TODO: Prepare statement and bind parameters
+    $stmt = $db->prepare($sql);
     // Bind all parameters from the $params array
-    
+
     // TODO: Execute the query
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
     
     // TODO: Check if update was successful
+    if ($stmt->execute()) {
+        if ($stmt->rowCount() > 0) {
+            sendResponse(['message' => 'Topic updated successfully']);
+        } else {
+            sendResponse(['message' => 'No changes made to the topic']);
+        }
+    } else {
+        sendResponse(['error' => 'Failed to update topic'], 500);
+    }
     // If yes, return success response
     // If no rows affected, return appropriate message
     // If error, return error with 500 status
@@ -290,21 +343,44 @@ function updateTopic($db, $data) {
  *   - id: The topic's unique identifier
  */
 function deleteTopic($db, $topicId) {
+    if (empty($topicId)) {
+        sendResponse(['error' => 'topic_id is required'], 400);
+    }
     // TODO: Validate that topicId is provided
+    $checkTopicStmt = $db->prepare("SELECT * FROM topics WHERE topic_id = :topic_id");
+    $checkTopicStmt->bindParam(':topic_id', $topicId);
+    $checkTopicStmt->execute();
     // If not, return error with 400 status
     
     // TODO: Check if topic exists
+    if ($checkTopicStmt->rowCount() === 0) {
+        sendResponse(['error' => 'Topic not found'], 404);
+    }
     // Prepare and execute a SELECT query
     // If not found, return error with 404 status
     
     // TODO: Delete associated replies first (foreign key constraint)
+    $deleteRepliesStmt = $db->prepare("DELETE FROM replies WHERE topic_id = :topic_id");
+    $deleteRepliesStmt->bindParam(':topic_id', $topicId);
+    $deleteRepliesStmt->execute();
+
     // Prepare DELETE query for replies table
     
     // TODO: Prepare DELETE query for the topic
+    $deleteTopicStmt = $db->prepare("DELETE FROM topics WHERE topic_id = :topic_id");
+
     
     // TODO: Prepare, bind, and execute
+    $deleteTopicStmt->bindParam(':topic_id', $topicId);
+    $deleteTopicStmt->execute();
+
     
     // TODO: Check if delete was successful
+    if ($deleteTopicStmt->rowCount() > 0) {
+        sendResponse(['message' => 'Topic and associated replies deleted successfully']);
+    } else {
+        sendResponse(['error' => 'Failed to delete topic'], 500);
+    }
     // If yes, return success response
     // If no, return error with 500 status
 }
