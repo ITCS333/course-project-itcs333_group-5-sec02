@@ -180,6 +180,27 @@ function handleReplyListClick(event) {
  * 8. If the topic is not found, display an error in `topicSubject`.
  */
 async function initializePage() {
+  currentTopicId = getTopicIdFromURL();
+  if (!currentTopicId) {
+    topicSubject.textContent = "Topic not found.";
+    return;
+  }
+  const [topicsRes, repliesRes] = await Promise.all([
+    fetch('topics.json'),
+    fetch('replies.json')
+  ]);
+  const topicsData = await topicsRes.json();
+  const repliesData = await repliesRes.json();
+  const topic = topicsData.find(t => t.id === currentTopicId);
+  currentReplies = repliesData[currentTopicId] || [];
+  if (topic) {
+    renderOriginalPost(topic);
+    renderReplies();
+    replyForm.addEventListener('submit', handleAddReply);
+    replyListContainer.addEventListener('click', handleReplyListClick);
+  } else {
+    topicSubject.textContent = "Topic not found.";
+  }
   // ... your implementation here ...
 }
 
