@@ -41,41 +41,36 @@
                          - input 'id': "week-title", type="text", required
                          - Example placeholder: "Week 1: Introduction to HTML" -->
 <br>
-                    <label for="week-title">Week Title</label>
+                    <label for="week-title">Week Title:</label>
                     <input id="week-title" type="text" required placeholder="Write Week title">
                     <br>
                     <!-- TODO: Add a 'label' and 'input' for the week's starting date.
                          - label 'for': "week-start-date"
                          - input 'id': "week-start-date", type="date", required -->
-                         <br>
-                    <label>Week start date</label>
-                   <input id="week-start-date" type="date" required placeholder="Add Date">
+                    <label for="week-start-date">Week start date:</label>
+                   <input id="week-start-date" type="date" required>
                    <br>
                     <!-- TODO: Add a 'label' and 'textarea' for the week's description and notes.
                          - label 'for': "week-description"
                          - textarea 'id': "week-description", rows="5" -->
-                    <br>
-                   <label>Week's Description</label>
-                   <textarea id="week-description" rows="5"></trextarea>
+                   <label for="week-description">Week's Description:</label>
+                   <textarea id="week-description" rows="5" placeholder="Enter week description"></trextarea>
                    <br>
                     <!-- TODO: Add a 'label' and 'textarea' for links to exercises or resources (one link per line).
                          - label 'for': "week-links"
                          - textarea 'id': "week-links", rows="3" -->
-<label>Week Links</label>
-            <textarea id="week-links" rows="3"></textarea>
+            <label for="week-links">Week Links:</label>
+            <textarea id="week-links" rows="3" placeholder="Enter one link per line"></textarea>
                    <br>
                     <!-- TODO: Add a 'button' to submit the form.
                          - id="add-week", type="submit", Text: "Add Week" -->
                 <!-- End of fieldset. -->
             <!-- End of form. -->
         <!-- End of form section. -->
-         <br>
             <button id="add-week" type="submit">Add Week</button>
                     </fieldset>
         </form>
         </section>
-
-
         <!-- Section 2: Existing Weekly Entries -->
         <!-- TODO: Create a 'section' to display the list of current weeks. -->
 <section>
@@ -83,14 +78,21 @@
 <h2>Current Week Breackdown</h2>
             <!-- TODO: Create a 'table' with id "weeks-table". -->
              <table id="weeks-table" border="1">
-<thead>
+                <!-- TODO: Create a 'thead' and a 'tr' inside it. -->
+                    <!-- TODO: Add 'th' elements for "Week Title", "Description", and "Actions". -->
+                <thead>
     <tr>
         <th>Week Title</th>
         <th>Description</th>
         <th>Actions</th>
     </tr>
 </thead>
-<tbody id="weeks-tbody">
+                <!-- TODO: Create a 'tbody' for the data. -->
+                    <!-- TODO: Add 1-2 rows of dummy data to see the structure. -->
+                    <!-- Example Row 1: -->
+                    <!-- TODO: Create a 'tr' for the first week. -->
+                        <!-- TODO: Add 'td' cells for a title (e.g., "Week 1: Intro to HTML") and a short description. -->
+                        <tbody id="weeks-tbody">
     <tr>
         <td>First Week : </td>
         <td>Introductory concepts of HTML</td>
@@ -99,16 +101,12 @@
             <button class="delete-btn">Delete</button>
         </td>
     </tr>
-    <tr>
-        Second Week
-        <td>Week2:intro to CSS</td>
-        <td>Description:</td>
-    </tr>
-    <tr>
-        <td><button value="Edit">Edit</button></td>
-        <td><button value="Delete">Delete</button></td>
-    </tr>
-    <tr>
+                        <!-- TODO: Add a 'td' containing the action buttons. -->
+                            <!-- TODO: Add an "Edit" button. -->
+                            <!-- TODO: Add a "Delete" button. -->
+                        <!-- End of actions 'td'. -->
+                    <!-- End of the row. -->
+<tr>
                         <td>Week 2: Introduction to CSS</td>
                         <td>Basic styling with CSS</td>
                         <td>
@@ -117,27 +115,11 @@
                         </td>
                     </tr>
 </tbody>
-
-             </table>
-             </section>
-                <!-- TODO: Create a 'thead' and a 'tr' inside it. -->
-                    <!-- TODO: Add 'th' elements for "Week Title", "Description", and "Actions". -->
-                
-                <!-- TODO: Create a 'tbody' for the data. -->
-                    <!-- TODO: Add 1-2 rows of dummy data to see the structure. -->
-                    <!-- Example Row 1: -->
-                    <!-- TODO: Create a 'tr' for the first week. -->
-                        <!-- TODO: Add 'td' cells for a title (e.g., "Week 1: Intro to HTML") and a short description. -->
-                        
-                        <!-- TODO: Add a 'td' containing the action buttons. -->
-                            <!-- TODO: Add an "Edit" button. -->
-                            <!-- TODO: Add a "Delete" button. -->
-                        <!-- End of actions 'td'. -->
-                    <!-- End of the row. -->
-
                 <!-- End of tbody. -->
             <!-- End of table. -->
         <!-- End of list section. -->
+          </table>
+             </section>
     <!-- End of main. -->
      </main>
     </body>
