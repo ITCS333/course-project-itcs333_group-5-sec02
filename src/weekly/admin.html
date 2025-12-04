@@ -20,7 +20,6 @@
 </head>
     <!-- TODO: Create a 'header' with a main heading ('h1') "Manage Weekly Breakdown". -->
     <!-- TODO: Create the 'main' content area. -->
-    ///add body tag --- need to review
     <body>
         <header>
    <h1>Manage Weekly Breakdown</h1>
@@ -32,7 +31,7 @@
                     <fieldset>
                         <legend>Weekly Details</legend>
                         <br>
-                    <label>Week Title</label>
+                    <label for="week-title">Week Title</label>
                     <input id="week-title" type="text" required placeholder="Write Week title">
                     <br>
                     <label>Week start date</label>
@@ -45,7 +44,6 @@
             <textarea id="week-links" rows="3"></textarea>
                    <br>
             <button id="add-week" type="submit">Add Week</button>
-            <input type="submit" value="submit">
                     </fieldset>
         </form>
         </section>
@@ -87,19 +85,22 @@
             <!-- TODO: Add a sub-heading ('h2') "Current Weekly Breakdown". -->
 <h2>Current Week Breackdown</h2>
             <!-- TODO: Create a 'table' with id "weeks-table". -->
-             <table id="weeks-table">
+             <table id="weeks-table" border="1">
 <thead>
     <tr>
         <th>Week Title</th>
         <th>Description</th>
-        <th>Action</th>
+        <th>Actions</th>
     </tr>
 </thead>
 <tbody id="weeks-tbody">
-    <tr border="1px">
-        <td>First Week</td> //need to review
-        <td>Week1:intro to HTML</td>
-        <td>Description:</td>
+    <tr>
+        <td>First Week : </td>
+        <td>Introductory concepts of HTML</td>
+        <td>
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+        </td>
     </tr>
     <tr>
         Second Week
@@ -110,6 +111,14 @@
         <td><button value="Edit">Edit</button></td>
         <td><button value="Delete">Delete</button></td>
     </tr>
+    <tr>
+                        <td>Week 2: Introduction to CSS</td>
+                        <td>Basic styling with CSS</td>
+                        <td>
+                            <button class="edit-btn">Edit</button>
+                            <button class="delete-btn">Delete</button>
+                        </td>
+                    </tr>
 </tbody>
 
              </table>
