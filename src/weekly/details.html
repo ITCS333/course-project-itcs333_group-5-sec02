@@ -39,7 +39,7 @@
             <!-- End of the list. -->
         <!-- End of article. -->
          <h2 class="display-6">Exercises and Rescources:</h2>
-         <ul id="week-links-list">
+         <ul id="week-links-list" class="list-inline">
             <li><a href="#">Exercise#1 - Basic Tages</a></li>
             <li><a href="#">Exercise#2 - Forms and tables</a></li>
             <li><a href="#">Resource#1 - HTML Cheat Sheet</a></li> 
@@ -49,7 +49,7 @@
         <!-- Section 2: Discussion Forum -->
         <!-- TODO: Create a 'section' for the discussion, with an 'id' of "discussion-forum". -->
             <!-- TODO: Add a sub-heading ('h2') "Discussion". -->
-             <section id="discussion Forum">
+             <section id="discussion Forum" class="container" style="max-width:700px;">
                 <h2 class="display-6">Discussion:</h2>
             <!-- Subsection 2.1: Existing Comments -->
             <!-- TODO: Add a container (like a 'div') for the list of comments. -->
@@ -59,17 +59,17 @@
                     <!-- TODO: Use a 'p' for the comment text (e.g., "I have a question about the 'header' tag."). -->
                     <!-- TODO: Use a 'footer' to show the author (e.g., "Posted by: John Doe"). -->
                 <!-- End of comment article. -->
-                <section id="Existing Comments"></section>
+                <section id="Existing Comments" class="container" style="max-width:700px;"></section>
             <div id="comment-list">
-                <article class="comment">
-                    <p>I have a question about the 'header' tag</p>
+                <article class="comment" class="card p-3 mb-3 shadow-sm">
+                    <p class="mb-3 text-secondary">I have a question about the 'header' tag</p>
                     <footer>Posted by: John Doe</footer>
                 </article>
                 <section id="Existing Comments"></section>
             <div>
                 <article class="comment">
                     <p>Can you add more examples about forms tag?</p>
-                    <footer>Posted by: Zakeya Alqassab</footer>
+                    <footer class="bg-light text-center py-3 border-top mt-4">Posted by: Zakeya Alqassab</footer>
                 </article>
             </div> 
             <!-- Subsection 2.2: Add a Comment Form -->
@@ -83,12 +83,12 @@
                     
                     <!-- TODO: Add a 'button' to submit the comment.
                          - type="submit", Text: "Post Comment" -->
-                         <form action="#" id="comment-form">
-                            <fieldset>
-                                <legend>Ask a question</legend>
-                                <label for="new-comment">New Comment</label><br>
-                                <textarea id="new-comment-text" name="new-comment "required></textarea><br>
-                                <button type="submit" value="submit">Post Comment</button>
+                         <form action="#" id="comment-form" class="row gy-2 gx-3 align-items-center">
+                            <fieldset class="p-3 border rounded" disabled>
+                                <legend class="fw-bold" disabled>Ask a question</legend>
+                                <label for="new-comment" class="form-label">New Comment</label><br>
+                                <textarea class="form-control" id="new-comment-text" name="new-comment "required></textarea><br>
+                                <button class="btn btn-outline-dark" type="submit" value="submit">Post Comment</button>
                             </fieldset>
                          </form>
                 <!-- End of fieldset. -->
