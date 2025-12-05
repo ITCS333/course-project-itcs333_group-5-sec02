@@ -28,7 +28,8 @@
             <!-- TODO: Add a paragraph ('p') to display the start date, e.g., "Starts on: YYYY-MM-DD". -->
             <!-- TODO: Add a sub-heading ('h2') "Description & Notes". -->
             <!-- TODO: Add a paragraph ('p') with dummy text for the week's detailed notes. -->
-<article>
+<div class="container mt-4">
+            <article>
     <p id="week-start-date">Start on: 8 Oct 2025 </p>
     <h2 class="display-6">Description and Notes:</h2>
     <p id="week-description">This week covers HTML Basices such as paragraphs , heading ,..etc , and examples & resources which will help you understand how to code using HTML.</p>
@@ -46,6 +47,7 @@
             <li><a href="chatGPT">Resource#2 - Chat GPT</a></li>
          </ul>
 </article>
+</div>
         <!-- Section 2: Discussion Forum -->
         <!-- TODO: Create a 'section' for the discussion, with an 'id' of "discussion-forum". -->
             <!-- TODO: Add a sub-heading ('h2') "Discussion". -->
@@ -60,13 +62,14 @@
                     <!-- TODO: Use a 'footer' to show the author (e.g., "Posted by: John Doe"). -->
                 <!-- End of comment article. -->
                 <section id="Existing Comments" class="container" style="max-width:700px;"></section>
-            <div id="comment-list">
+            <div id="comment-list" class="container mt-4"></div>
                 <article class="comment" class="card p-3 mb-3 shadow-sm">
                     <p class="mb-3 text-secondary">I have a question about the 'header' tag</p>
                     <footer>Posted by: John Doe</footer>
                 </article>
+            </div>
+            <div class="container mt-4">
                 <section id="Existing Comments"></section>
-            <div>
                 <article class="comment">
                     <p>Can you add more examples about forms tag?</p>
                     <footer class="bg-light text-center py-3 border-top mt-4">Posted by: Zakeya Alqassab</footer>
@@ -83,6 +86,7 @@
                     
                     <!-- TODO: Add a 'button' to submit the comment.
                          - type="submit", Text: "Post Comment" -->
+                        <div class="container mt-4"></div>
                          <form action="#" id="comment-form" class="row gy-2 gx-3 align-items-center">
                             <fieldset class="p-3 border rounded" disabled>
                                 <legend class="fw-bold" disabled>Ask a question</legend>
@@ -91,6 +95,7 @@
                                 <button class="btn btn-outline-dark" type="submit" value="submit">Post Comment</button>
                             </fieldset>
                          </form>
+                        </div>
                 <!-- End of fieldset. -->
             <!-- End of form. -->
         <!-- End of discussion section. -->
