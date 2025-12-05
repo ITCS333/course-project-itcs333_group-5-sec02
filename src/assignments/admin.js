@@ -93,10 +93,11 @@ function handleAddAssignment(event) {
   // ... your implementation here ...
   event.preventDefault();
 
-  let title = document.querySelector('#title').value;
-  let description = document.querySelector('#description').value;
-  let dueDate = document.querySelector('#due-date').value;
-  let files = document.querySelector('#files');
+  let title = document.querySelector('#assignment-title').value;
+  let description = document.querySelector('#assignment-description').value;
+  let dueDate = document.querySelector('#assignment-due-date').value;
+  let files = document.querySelector('#assignment-files').value;
+
 
   let newAssignment = {
     id: `asg_${Date.now()}`,
