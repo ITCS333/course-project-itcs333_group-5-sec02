@@ -83,14 +83,15 @@ function createCommentArticle(comment) {
   // ... your implementation here ...
   let article = document.createElement('article');
 
-  let authorp = document.createElement('p');
-  authorp.textContent = comment.author;
-
   let textp = document.createElement('p');
   textp.textContent = comment.text;
 
-  article.appendChild(authorp);
+  let footer = document.createElement('footer');
+  footer.textContent = `Posted by: ${comment.author}`;
+
   article.appendChild(textp);
+  article.appendChild(footer);
+
   return article;
 
 }
@@ -163,7 +164,7 @@ async function initializePage() {
     return;
   }
   let [assignments, commentsData] = await Promise.all([
-    fetch('assignment.json').then(r=> r.json()),
+    fetch('assignments.json').then(r=> r.json()),
     fetch('comments.json').then(r=> r.json())
   ]);
   
