@@ -1,1 +1,11 @@
 /* CSS Styles */
+fieldset {
+    border: 2px solid #ccc !important;
+    padding: 15px !important;
+    border-radius: 8px;
+}
+
+legend {
+    padding: 0 10px;
+    font-weight: bold;
+}
