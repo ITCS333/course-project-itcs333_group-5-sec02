@@ -35,7 +35,7 @@
             <!-- TODO: Create a 'form' with an id "week-form". Action can be '#'. -->
                 <!-- TODO: Use a 'fieldset' to group the form controls. -->
                     <!-- TODO: Add a 'legend', e.g., "Weekly Details". -->
-<form id="week-form" action="#">
+<form id="week-form" action="#" class="row gy-2 gx-3 align-items-center">
                     <fieldset>
                         <legend>Weekly Details</legend>
                     <!-- TODO: Add a 'label' and 'input' for the week's title.
@@ -43,29 +43,29 @@
                          - input 'id': "week-title", type="text", required
                          - Example placeholder: "Week 1: Introduction to HTML" -->
 <br>
-                    <label for="week-title">Week Title:</label>
-                    <input id="week-title" type="text" required placeholder="Write Week title">
+                    <label class="form-label" for="week-title">Week Title:</label>
+                    <input class="form-control" id="week-title" type="text" required placeholder="Write Week title">
                     <br>
                     <!-- TODO: Add a 'label' and 'input' for the week's starting date.
                          - label 'for': "week-start-date"
                          - input 'id': "week-start-date", type="date", required -->
                          <br>
-                    <label for="week-start-date">Week start date:</label>
-                   <input id="week-start-date" type="date" required>
+                    <label class="form-label" for="week-start-date">Week start date:</label>
+                   <input class="form-control" id="week-start-date" type="date" required>
                    <br>
                     <!-- TODO: Add a 'label' and 'textarea' for the week's description and notes.
                          - label 'for': "week-description"
                          - textarea 'id': "week-description", rows="5" -->
                          <br>
-                   <label for="week-description">Week's Description:</label>
-                   <textarea id="week-description" rows="5" placeholder="Enter week description"></textarea>
+                   <label class="form-label" for="week-description">Week's Description:</label>
+                   <textarea class="form-control" id="week-description" rows="5" placeholder="Enter week description"></textarea>
                    <br>
                     <!-- TODO: Add a 'label' and 'textarea' for links to exercises or resources (one link per line).
                          - label 'for': "week-links"
                          - textarea 'id': "week-links", rows="3" -->
                          <br>
-            <label for="week-links">Week Links:</label>
-            <textarea id="week-links" rows="3" placeholder="Enter one link per line"></textarea>
+            <label class="form-label" for="week-links">Week Links:</label>
+            <textarea class="form-control" id="week-links" rows="3" placeholder="Enter one link per line"></textarea>
             <br>
                     <!-- TODO: Add a 'button' to submit the form.
                          - id="add-week", type="submit", Text: "Add Week" -->
@@ -73,7 +73,7 @@
             <!-- End of form. -->
         <!-- End of form section. -->
          <br>
-            <button id="add-week" type="submit">Add Week</button>
+            <button class="btn btn-outline-dark" id="add-week" type="submit">Add Week</button>
             <br>
                     </fieldset>
         </form>
