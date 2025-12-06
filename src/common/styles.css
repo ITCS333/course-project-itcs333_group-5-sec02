@@ -10,207 +10,213 @@
     padding: 0 10px;
     font-weight: bold;
 }
-/* ==============================
-   Reset some defaults
-============================== */
+/* ==================== Global Rules ==================== */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", sans-serif;
     line-height: 1.6;
-    background-color: #f4f4f4;
-    color: #333;
-    padding: 20px;
+    background-color: #f1f8f4; /* Light green tint */
+    color: #1b3c2d;
 }
 
-/* ==============================
-   Headers
-============================== */
+/* ==================== Header ==================== */
+
 header {
-    background-color: #2c3e50;
+    background: #2e7d32; /* Green */
     color: #fff;
-    padding: 20px 0;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    margin-bottom: 1.5rem;
+}
+
+header h1,
+header h2 {
     text-align: center;
-    margin-bottom: 20px;
-    border-radius: 8px;
+    font-weight: 600;
 }
 
-header h1 {
-    font-size: 2rem;
-}
+/* ==================== Main ==================== */
 
-/* ==============================
-   Main Content
-============================== */
 main {
-    max-width: 900px;
-    margin: 0 auto;
+    max-width: 960px;
+    margin: 0 auto 2.5rem auto;
+    padding: 0 1rem;
 }
 
-/* ==============================
-   Navigation
-============================== */
-nav ul {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 30px;
+section {
+    background: #ffffff;
+    padding: 1.3rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.08);
+    border-left: 6px solid #4caf50; /* Green stripe */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-nav ul li a {
-    text-decoration: none;
-    color: #2c3e50;
-    font-weight: bold;
-    padding: 8px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
+section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
 }
 
-nav ul li a:hover {
-    background-color: #2c3e50;
-    color: #fff;
-}
+/* ==================== Form Styling ==================== */
 
-/* ==============================
-   Sections & Articles
-============================== */
-section, article {
-    background-color: #fff;
-    padding: 20px;
-    margin-bottom: 20px;
+fieldset {
+    border: 1px solid #a5d6a7;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 1rem 1.25rem;
+    background-color: #f5fdf6;
 }
 
-/* ==============================
-   Tables
-============================== */
-table {
+legend {
+    font-weight: 600;
+    padding: 0 0.3rem;
+    color: #2e7d32;
+}
+
+label {
+    display: block;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+    color: #1b5e20;
+}
+
+input,
+textarea {
     width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #a5d6a7;
+    font: inherit;
+    margin-bottom: 0.5rem;
+    background-color: #ffffff;
 }
 
-table th, table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
+input:focus,
+textarea:focus {
+    outline: 2px solid #4caf50;
 }
 
-table th {
-    background-color: #2c3e50;
-    color: #fff;
-}
+/* ==================== Buttons ==================== */
 
-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-/* ==============================
-   Forms
-============================== */
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-form label {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-form input[type="text"],
-form input[type="email"],
-form input[type="password"],
-form input[type="url"],
-form input[type="date"],
-form textarea {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    font-size: 1rem;
-}
-
-form button {
-    padding: 10px 15px;
-    background-color: #2c3e50;
-    color: #fff;
+button,
+input[type="submit"] {
+    padding: 0.55rem 1rem;
+    border-radius: 6px;
     border: none;
-    border-radius: 5px;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-}
-
-form button:hover {
-    background-color: #34495e;
-}
-
-/* ==============================
-   Buttons
-============================== */
-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    background-color: #2c3e50;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    background-color: #43a047; /* Green */
+    color: #ffffff;
+    margin-top: 0.75rem;
+    transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
 button:hover {
-    background-color: #34495e;
+    background-color: #2e7d32;
+    transform: translateY(-2px);
 }
 
-/* ==============================
-   Links
-============================== */
+.edit-btn {
+    background-color: #8bc34a;
+}
+
+.edit-btn:hover {
+    background-color: #7cb342;
+}
+
+.delete-btn {
+    background-color: #e53935;
+}
+
+.delete-btn:hover {
+    background-color: #c62828;
+}
+
+/* ==================== Tables ==================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background-color: #c8e6c9;
+}
+
+th, td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9fff9;
+}
+
+/* ==================== Links ==================== */
+
 a {
-    color: #2980b9;
-    text-decoration: none;
+    color: #2e7d32;
+    font-weight: 500;
 }
 
 a:hover {
+    color: #1b5e20;
     text-decoration: underline;
 }
 
-/* ==============================
-   Comments & Discussion
-============================== */
-.comment, #comments-container, #comment-list {
-    margin-bottom: 20px;
+/* ==================== Home Page Navigation Hover Effect ==================== */
+
+nav ul li {
+    background-color: #e8f5e9;
+    padding: 0.8rem;
+    border-radius: 10px;
+    margin-bottom: 0.6rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.comment p {
-    font-style: italic;
+nav ul li:hover {
+    background-color: #c8e6c9;
+    transform: translateX(5px);
 }
 
-.comment footer {
-    font-size: 0.85rem;
-    color: #555;
-    margin-top: 5px;
+/* ==================== Articles ==================== */
+
+article {
+    background-color: #ffffff;
+    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    border-left: 6px solid #66bb6a;
+    box-shadow: 0 1px 6px rgba(56, 142, 60, 0.15);
+    transition: 0.2s ease;
 }
 
-/* ==============================
-   Responsive
-============================== */
-@media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    main {
-        padding: 0 10px;
-    }
+article:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(56, 142, 60, 0.25);
 }
 
+/* ==================== Discussion & Replies ==================== */
+
+.comment,
+.reply {
+    background-color: #f1f8f4;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #4caf50;
+    margin-bottom: 0.75rem;
+}
