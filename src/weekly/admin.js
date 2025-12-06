@@ -43,7 +43,7 @@ let tdtitle=document.createElement("td");
 tdtitle.textContent=week.title;
 
 let tddescription=document.createElement("td");
-tddescription.textContent=week.description;
+tddescription.textContent = week.description || "No description";
 
 let tdbutton=document.createElement("td");
 let editbutton=document.createElement("button");
@@ -52,7 +52,7 @@ editbutton.classList.add("edit-btn");
 editbutton.setAttribute("data-id", week.id);
 
 let deletebutton=document.createElement("button");
-deletebutton.textContent="delete";
+deletebutton.textContent="Delete";
 deletebutton.classList.add("delete-btn");
 deletebutton.setAttribute("data-id" , week.id);
 
@@ -117,7 +117,7 @@ function handleAddWeek(event) {
 
 weeks.push(newweek);
 renderTable();
-event.target.reset();
+form.reset();
     }
 
 
