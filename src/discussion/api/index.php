@@ -192,6 +192,40 @@ function getAllTopics($db) {
     
     // TODO: Return JSON response with success status and data
     // Call sendResponse() helper function or echo json_encode directly
+    $sql = "SELECT topic_id, subject, message, author,
+            DATE_FORMAT(created_at, '%Y-%m-%d') AS created_at
+            FROM topics";
+
+    $params = [];
+
+    if (!empty($_GET['search'])) {
+        $sql .= " WHERE subject LIKE :search OR message LIKE :search OR author LIKE :search";
+        $params[':search'] = "%" . $_GET['search'] . "%";
+    }
+
+    $allowedSort = ['subject', 'author', 'created_at'];
+    $sort = $_GET['sort'] ?? 'created_at';
+    $order = strtolower($_GET['order'] ?? 'desc');
+
+    if (!in_array($sort, $allowedSort)) $sort = 'created_at';
+    if (!in_array($order, ['asc', 'desc'])) $order = 'desc';
+
+    $sql .= " ORDER BY $sort $order";
+
+    $stmt = $db->prepare($sql);
+
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+
+    $stmt->execute();
+
+    $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    sendResponse([
+        "success" => true,
+        "data" => $topics
+    ]);
 }
 
 
@@ -218,6 +252,28 @@ function getTopicById($db, $topicId) {
     // TODO: Check if topic exists
     // If topic found, return success response with topic data
     // If not found, return error with 404 status
+
+if (empty($topicId)) {
+        sendResponse(["error" => "Topic ID is required"], 400);
+    }
+
+    $sql = "SELECT topic_id, subject, message, author,
+            DATE_FORMAT(created_at, '%Y-%m-%d') AS created_at
+            FROM topics
+            WHERE topic_id = :topic_id";
+
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':topic_id', $topicId);
+    $stmt->execute();
+
+    $topic = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($topic) {
+        sendResponse(["success" => true, "data" => $topic]);
+    } else {
+        sendResponse(["error" => "Topic not found"], 404);
+    }
+
 }
 
 
@@ -257,6 +313,7 @@ function createTopic($db, $data) {
     // If yes, return success response with 201 status (Created)
     // Include the topic_id in the response
     // If no, return error with 500 status
+
 }
 
 
@@ -683,7 +740,7 @@ function isValidResource($resource) {
     
     // TODO: Check if resource is in the allowed list
     return in_array($resource, $allowedResources);
-    
+
 }
 
 ?>
