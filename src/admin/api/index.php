@@ -22,13 +22,16 @@
  *   - DELETE: Delete a student
  * 
  * Response Format: JSON
+ * 
+ * NOTE: CHANGED — API previously used student_id (string) as primary identifier.  
+ * Now uses id (INT) to match database schema. All changes marked clearly.
  */
 
 // TODO: Set headers for JSON response and CORS
-header("Content-Type: application/json"); // Set Content-Type to application/json
-header("Access-Control-Allow-Origin: *"); // Allow cross-origin requests
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS"); // Allow specific HTTP methods
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow specific headers
+header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 // TODO: Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -102,38 +105,43 @@ function getStudents($db) {
     $sort = isset($_GET['sort']) ? $_GET['sort'] : 'name';
     $order = isset($_GET['order']) && strtolower($_GET['order']) === 'desc' ? 'DESC' : 'ASC';
 
-    $allowedSort = ['name', 'student_id', 'email'];
+    $allowedSort = ['name', 'student_id', 'email', 'id']; // NOTE: CHANGED — added id sorting
+
     if(!in_array($sort, $allowedSort)) $sort = 'name';
 
     if($search) {
-        // TODO: Prepare SQL query with WHERE clause using LIKE
-        $stmt = $db->prepare("SELECT student_id, name, email, created_at FROM students 
-            WHERE name LIKE :search OR student_id LIKE :search OR email LIKE :search
-            ORDER BY $sort $order");
+        $stmt = $db->prepare("
+            SELECT id, student_id, name, email, created_at 
+            FROM students 
+            WHERE name LIKE :search 
+               OR student_id LIKE :search 
+               OR email LIKE :search
+            ORDER BY $sort $order
+        ");
         $stmt->bindValue(":search", "%$search%");
     } else {
-        $stmt = $db->prepare("SELECT student_id, name, email, created_at FROM students ORDER BY $sort $order");
+        $stmt = $db->prepare("SELECT id, student_id, name, email, created_at FROM students ORDER BY $sort $order");
     }
 
     $stmt->execute();
     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // TODO: Return JSON response with success status and data
     sendResponse(["success" => true, "data" => $students]);
 }
 
 // TODO: Function: Get a single student by student_id
-function getStudentById($db, $studentId) {
-    $stmt = $db->prepare("SELECT student_id, name, email, created_at FROM students WHERE student_id=:student_id");
-    $stmt->bindValue(":student_id", $studentId);
+// NOTE: CHANGED — now gets by primary key id instead of student_id
+function getStudentById($db, $id) {
+    // NOTE: CHANGED
+    $stmt = $db->prepare("SELECT id, student_id, name, email, created_at FROM students WHERE id=:id");
+    $stmt->bindValue(":id", intval($id));
+
     $stmt->execute();
     $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if($student) {
-        // TODO: Return success response with student data
         sendResponse(["success" => true, "data" => $student]);
     } else {
-        // TODO: Return error response with 404 status
         sendResponse(["success" => false, "message" => "Student not found"], 404);
     }
 }
@@ -160,6 +168,7 @@ function createStudent($db, $data) {
     $stmt->bindValue(":student_id", $student_id);
     $stmt->bindValue(":email", $email);
     $stmt->execute();
+
     if($stmt->fetchColumn() > 0) {
         sendResponse(["success" => false, "message" => "Student ID or Email already exists"], 409);
     }
@@ -168,14 +177,15 @@ function createStudent($db, $data) {
     $hashed = password_hash($password, PASSWORD_DEFAULT);
 
     // TODO: Prepare INSERT query
-    $stmt = $db->prepare("INSERT INTO students (student_id, name, email, password, created_at) 
-                          VALUES (:student_id, :name, :email, :password, NOW())");
+    $stmt = $db->prepare("
+        INSERT INTO students (student_id, name, email, password, created_at) 
+        VALUES (:student_id, :name, :email, :password, NOW())
+    ");
     $stmt->bindValue(":student_id", $student_id);
     $stmt->bindValue(":name", $name);
     $stmt->bindValue(":email", $email);
     $stmt->bindValue(":password", $hashed);
 
-    // TODO: Execute the query and return response
     if($stmt->execute()) {
         sendResponse(["success" => true, "message" => "Student created successfully"], 201);
     } else {
@@ -184,111 +194,153 @@ function createStudent($db, $data) {
 }
 
 // TODO: Function: Update an existing student
+// NOTE: CHANGED — entire function now updates using id (INT) not student_id
 function updateStudent($db, $data) {
-    $student_id = sanitizeInput($data['student_id'] ?? '');
-    if(!$student_id) sendResponse(["success" => false, "message" => "student_id required"], 400);
 
-    $stmt = $db->prepare("SELECT * FROM students WHERE student_id=:student_id");
-    $stmt->bindValue(":student_id", $student_id);
+    // NOTE: CHANGED
+    $id = intval($data['id'] ?? 0);
+    if($id <= 0) sendResponse(["success" => false, "message" => "id required"], 400);
+
+    $stmt = $db->prepare("SELECT * FROM students WHERE id=:id");
+    $stmt->bindValue(":id", $id);
     $stmt->execute();
+
     if(!$stmt->fetch()) sendResponse(["success" => false, "message" => "Student not found"], 404);
 
     $fields = [];
     $params = [];
+
     if(!empty($data['name'])) {
         $fields[] = "name=:name";
         $params[':name'] = sanitizeInput($data['name']);
     }
+
     if(!empty($data['email'])) {
-        if(!validateEmail($data['email'])) sendResponse(["success" => false, "message" => "Invalid email"], 400);
+        if(!validateEmail($data['email']))
+            sendResponse(["success" => false, "message" => "Invalid email"], 400);
+
         $fields[] = "email=:email";
         $params[':email'] = sanitizeInput($data['email']);
     }
 
     if(!$fields) sendResponse(["success" => false, "message" => "No fields to update"], 400);
 
-    $sql = "UPDATE students SET " . implode(", ", $fields) . " WHERE student_id=:student_id";
+    $sql = "UPDATE students SET " . implode(", ", $fields) . " WHERE id=:id";
     $stmt = $db->prepare($sql);
-    foreach($params as $k=>$v) $stmt->bindValue($k, $v);
-    $stmt->bindValue(":student_id", $student_id);
 
-    if($stmt->execute()) sendResponse(["success" => true, "message" => "Student updated successfully"]);
-    else sendResponse(["success" => false, "message" => "Update failed"], 500);
+    foreach($params as $k=>$v) {
+        $stmt->bindValue($k, $v);
+    }
+
+    $stmt->bindValue(":id", $id);
+
+    if($stmt->execute())
+        sendResponse(["success" => true, "message" => "Student updated successfully"]);
+    else
+        sendResponse(["success" => false, "message" => "Update failed"], 500);
 }
 
 // TODO: Function: Delete a student
-function deleteStudent($db, $student_id) {
-    if(!$student_id) sendResponse(["success" => false, "message" => "student_id required"], 400);
+// NOTE: CHANGED — delete now uses id (INT)
+function deleteStudent($db, $id) {
 
-    $stmt = $db->prepare("SELECT * FROM students WHERE student_id=:student_id");
-    $stmt->bindValue(":student_id", $student_id);
+    // NOTE: CHANGED
+    $id = intval($id);
+    if($id <= 0) sendResponse(["success" => false, "message" => "id required"], 400);
+
+    $stmt = $db->prepare("SELECT * FROM students WHERE id=:id");
+    $stmt->bindValue(":id", $id);
     $stmt->execute();
-    if(!$stmt->fetch()) sendResponse(["success" => false, "message" => "Student not found"], 404);
 
-    $stmt = $db->prepare("DELETE FROM students WHERE student_id=:student_id");
-    $stmt->bindValue(":student_id", $student_id);
-    if($stmt->execute()) sendResponse(["success" => true, "message" => "Student deleted successfully"]);
-    else sendResponse(["success" => false, "message" => "Delete failed"], 500);
+    if(!$stmt->fetch()) {
+        sendResponse(["success" => false, "message" => "Student not found"], 404);
+    }
+
+    $stmt = $db->prepare("DELETE FROM students WHERE id=:id");
+    $stmt->bindValue(":id", $id);
+
+    if($stmt->execute()) {
+        sendResponse(["success" => true, "message" => "Student deleted successfully"]);
+    } else {
+        sendResponse(["success" => false, "message" => "Delete failed"], 500);
+    }
 }
 
 // TODO: Function: Change password
+// NOTE: CHANGED — now uses id (INT)
 function changePassword($db, $data) {
-    $student_id = sanitizeInput($data['student_id'] ?? '');
+
+    // NOTE: CHANGED
+    $id = intval($data['id'] ?? 0);
     $current = $data['current_password'] ?? '';
     $new = $data['new_password'] ?? '';
 
-    // TODO: Validate required fields
-    if(!$student_id || !$current || !$new) sendResponse(["success" => false, "message" => "All fields required"], 400);
+    if($id <= 0 || !$current || !$new)
+        sendResponse(["success" => false, "message" => "All fields required"], 400);
 
-    // TODO: Validate new password strength
-    if(strlen($new)<8) sendResponse(["success" => false, "message" => "Password must be at least 8 characters"], 400);
-
-    $stmt = $db->prepare("SELECT password FROM students WHERE student_id=:student_id");
-    $stmt->bindValue(":student_id", $student_id);
+    if(strlen($new) < 8)
+        sendResponse(["success" => false, "message" => "Password must be at least 8 characters"]);
+    
+    $stmt = $db->prepare("SELECT password FROM students WHERE id=:id");
+    $stmt->bindValue(":id", $id);
     $stmt->execute();
+
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // TODO: Verify current password
-    if(!$row) sendResponse(["success" => false, "message" => "Student not found"], 404);
-    if(!password_verify($current, $row['password'])) sendResponse(["success" => false, "message" => "Current password incorrect"], 401);
+    if(!$row)
+        sendResponse(["success" => false, "message" => "Student not found"], 404);
 
-    // TODO: Hash the new password
+    if(!password_verify($current, $row['password']))
+        sendResponse(["success" => false, "message" => "Current password incorrect"], 401);
+
     $hashed = password_hash($new, PASSWORD_DEFAULT);
 
-    $stmt = $db->prepare("UPDATE students SET password=:password WHERE student_id=:student_id");
+    $stmt = $db->prepare("UPDATE students SET password=:password WHERE id=:id");
     $stmt->bindValue(":password", $hashed);
-    $stmt->bindValue(":student_id", $student_id);
-    if($stmt->execute()) sendResponse(["success" => true, "message" => "Password updated successfully"]);
-    else sendResponse(["success" => false, "message" => "Password update failed"], 500);
-}
+    $stmt->bindValue(":id", $id);
 
+    if($stmt->execute())
+        sendResponse(["success" => true, "message" => "Password updated successfully"]);
+    else
+        sendResponse(["success" => false, "message" => "Password update failed"], 500);
+}
 
 // ============================================================================
 // MAIN REQUEST ROUTER
 // ============================================================================
 
 try {
+
     if($method==='GET'){
-        if(isset($_GET['student_id'])) getStudentById($db, $_GET['student_id']);
+        // NOTE: CHANGED — GET now expects id not student_id
+        if(isset($_GET['id'])) getStudentById($db, $_GET['id']);
         else getStudents($db);
+
     } elseif($method==='POST'){
-        if(isset($_GET['action']) && $_GET['action']==='change_password') changePassword($db, $input);
-        else createStudent($db, $input);
+        if(isset($_GET['action']) && $_GET['action']==='change_password')
+            changePassword($db, $input);
+        else
+            createStudent($db, $input);
+
     } elseif($method==='PUT'){
         updateStudent($db, $input);
+
     } elseif($method==='DELETE'){
-        $sid = $_GET['student_id'] ?? $input['student_id'] ?? '';
-        deleteStudent($db, $sid);
+        // NOTE: CHANGED — delete now expects id
+        $id = $_GET['id'] ?? $input['id'] ?? '';
+        deleteStudent($db, $id);
+
     } else {
         // TODO: Return error for unsupported methods
         sendResponse(["success"=>false,"message"=>"Method Not Allowed"],405);
     }
+
 } catch(PDOException $e){
     // TODO: Handle database errors
     sendResponse(["success"=>false,"message"=>"Database error"],500);
+
 } catch(Exception $e){
     // TODO: Handle general errors
     sendResponse(["success"=>false,"message"=>"Server error"],500);
 }
-
 ?>
