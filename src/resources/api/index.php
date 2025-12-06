@@ -179,7 +179,8 @@ function getAllResources($db) {
 function getResourceById($db, $resourceId) {
     // TODO: Validate that resource ID is provided and is numeric
     // If not, return error response with 400 status
-     if (empty($resourceId) || !is_numeric($resourceId)) {
+     //if (empty($resourceId) || !is_numeric($resourceId)) {
+    if (empty($resourceId)) { //CHANGED 
         sendResponse(false, ['error' => 'Invalid resource ID'], 400);
         return;
     }
