@@ -132,7 +132,7 @@ function handleAddStudent(event) {
   // ... your implementation here ...
   event.preventDefault();
   const name = document.querySelector("#student-name").value.trim();
-  const id = document.querySelector("#student-id").value.trim();
+  const id = Number(document.querySelector("#student-id").value.trim());
   const email = document.querySelector("#student-email").value.trim();
   
   if (!name || !id || !email) {
@@ -170,7 +170,7 @@ function handleAddStudent(event) {
 function handleTableClick(event) {
   // ... your implementation here ...
   if (event.target.classList.contains("delete-btn")) {
-    const id = event.target.dataset.id;
+    const id = Number(event.target.dataset.id);
     students = students.filter(s => s.id !== id);
     renderTable(students);
   }

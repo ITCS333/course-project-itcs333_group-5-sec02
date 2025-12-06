@@ -1,15 +1,5 @@
 /* CSS Styles */
 /* CSS Styles */
-#zakeya-f {
-    border: 2px solid #ccc !important;
-    padding: 15px !important;
-    border-radius: 8px;
-}
-
-#zakeya-l {
-    padding: 0 10px;
-    font-weight: bold;
-}
 /* ==================== Global Rules ==================== */
 * {
     box-sizing: border-box;

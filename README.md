@@ -10,5 +10,5 @@ Shaikha Mohammed Hussain Alkhulaqi 202308269
 ## A table indicating which student was responsible for which task.
 Shaikha - assignments task
 Zakeya - Weekly task
-sakeenah- Auth task 
+sakeenah- task 1 Homepage, Admin Portal & User Management 
 ## A link to your live, hosted application on Replit.

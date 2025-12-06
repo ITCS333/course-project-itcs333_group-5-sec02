@@ -13,7 +13,7 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the week list ('#week-list-section').
-let sec = document.getElementById("week-list-section");
+let weekListSection = document.getElementById("week-list-section");
 // --- Functions ---
 
 /**
@@ -25,19 +25,23 @@ let sec = document.getElementById("week-list-section");
  */
 function createWeekArticle(week) {
   // ... your implementation here ...
-  let article = document.createElement("article"); // h2 - p - p - a
-  let h2 = document.createElement("h1");
-  h2.textContent = `${week.title}` ;
+  const article = document.createElement("article");
+
+  const h2 = document.createElement("h2");
+  h2.textContent = week.title;
   article.appendChild(h2);
-  let p = document.createElement("p");
-  p.textContent = textContent = `Start On=${week.startdate}` ;
-  article.appendChild(p);
-  let p2 = document.createElement("p");
-  p2.textContent = textContent = `description=${week.description}` ;
-  article.appendChild(p2);
-  let a = document.createElement("a");
-  a.href =`details.html?id=${id}` ;
-  a.textContent = "view Details & Discussion";
+
+  const startP = document.createElement("p");
+  startP.textContent = `Start Date: ${week.startDate}`;
+  article.appendChild(startP);
+
+  const descP = document.createElement("p");
+  descP.textContent = week.description;
+  article.appendChild(descP);
+
+  const a = document.createElement("a");
+  a.href = `details.html?id=${week.id}`;
+  a.textContent = "View Details & Discussion";
   article.appendChild(a);
 
   return article;
@@ -56,12 +60,19 @@ function createWeekArticle(week) {
  */
 async function loadWeeks() {
   // ... your implementation here ...
-  let respone = await fetch('weeks.json');
-  let weekarray = await respone.json();
-  sec.innerHTML= "";
-  for ( let i=0 ; i<weekarray.length ; i++){
-    let article = createWeekArticle(week[i]);
-    return sec.appendChild(article);
+   try {
+    const response = await fetch('weeks.json');
+    const weekArray = await response.json();
+
+    weekListSection.innerHTML = "";
+
+    weekArray.forEach(week => {
+      const article = createWeekArticle(week);
+      weekListSection.appendChild(article);
+    });
+  } catch (error) {
+    console.error("Error loading weeks:", error);
+    weekListSection.textContent = "Failed to load weeks.";
   }
 
 

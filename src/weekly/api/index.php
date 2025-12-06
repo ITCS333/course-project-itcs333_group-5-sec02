@@ -171,11 +171,11 @@ function getWeekById($db, $weekId) {
     }
     // TODO: Prepare SQL query to select week by week_id
     // SELECT week_id, title, start_date, description, links, created_at FROM weeks WHERE week_id = ?
-    $sql = "SELECT week_id , title , start_date , description , links , created_at FROM weeeks WHERE week_id = :week_id LIMIT 1";
+    $sql = "SELECT week_id , title , start_date , description , links , created_at FROM weeks WHERE week_id = :week_id LIMIT 1";
 
     // TODO: Bind the week_id parameter
     $stmt = $db->prepare($sql);
-    $stmt->bindValue(' :week_id' , $weekId);
+    $stmt->bindValue(':week_id', $weekId);
     // TODO: Execute the query
     $stmt->execute();
     // TODO: Fetch the result
@@ -213,7 +213,7 @@ function createWeek($db, $data) {
     }
     // TODO: Sanitize input data
     // Trim whitespace from title, description, and week_id
-    week_id = sanitizeInput($data['week_id'] ?? '');
+    $week_id = sanitizeInput($data['week_id'] ?? '');
     $title = sanitizeInput($data['title'] ?? '');
     $start_date = $data['start_date'] ?? '';
     $description = sanitizeInput($data['description'] ?? '');

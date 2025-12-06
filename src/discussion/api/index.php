@@ -123,18 +123,28 @@ require_once '../config/database.php';
 
 // TODO: Get the PDO database connection
 // $db = $database->getConnection();
+$database = new Database();
+$db = $database->getConnection();
 
 
 // TODO: Get the HTTP request method
 // Use $_SERVER['REQUEST_METHOD']
+$method = $_SERVER['REQUEST_METHOD'];
 
 
 // TODO: Get the request body for POST and PUT requests
 // Use file_get_contents('php://input') to get raw POST data
 // Decode JSON data using json_decode()
+$inputData = null;
+if ($method === 'POST' || $method === 'PUT') {
+    $rawData = file_get_contents('php://input');
+    $inputData = json_decode($rawData, true);
+}
 
 
 // TODO: Parse query parameters for filtering and searching
+$resource = isset($_GET['resource']) ? $_GET['resource'] : null;
+
 
 
 // ============================================================================
@@ -151,12 +161,17 @@ require_once '../config/database.php';
  *   - order: Optional sort order (asc or desc, default: desc)
  */
 function getAllTopics($db) {
+    $sql = "SELECT topic_id, subject, message, author, DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at FROM topics";
     // TODO: Initialize base SQL query
+    
+
     // Select topic_id, subject, message, author, and created_at (formatted as date)
     
     // TODO: Initialize an array to hold bound parameters
     
+    
     // TODO: Check if search parameter exists in $_GET
+
     // If yes, add WHERE clause using LIKE for subject, message, OR author
     // Add the search term to the params array
     
@@ -177,6 +192,40 @@ function getAllTopics($db) {
     
     // TODO: Return JSON response with success status and data
     // Call sendResponse() helper function or echo json_encode directly
+    $sql = "SELECT topic_id, subject, message, author,
+            DATE_FORMAT(created_at, '%Y-%m-%d') AS created_at
+            FROM topics";
+
+    $params = [];
+
+    if (!empty($_GET['search'])) {
+        $sql .= " WHERE subject LIKE :search OR message LIKE :search OR author LIKE :search";
+        $params[':search'] = "%" . $_GET['search'] . "%";
+    }
+
+    $allowedSort = ['subject', 'author', 'created_at'];
+    $sort = $_GET['sort'] ?? 'created_at';
+    $order = strtolower($_GET['order'] ?? 'desc');
+
+    if (!in_array($sort, $allowedSort)) $sort = 'created_at';
+    if (!in_array($order, ['asc', 'desc'])) $order = 'desc';
+
+    $sql .= " ORDER BY $sort $order";
+
+    $stmt = $db->prepare($sql);
+
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+
+    $stmt->execute();
+
+    $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    sendResponse([
+        "success" => true,
+        "data" => $topics
+    ]);
 }
 
 
@@ -203,6 +252,28 @@ function getTopicById($db, $topicId) {
     // TODO: Check if topic exists
     // If topic found, return success response with topic data
     // If not found, return error with 404 status
+
+if (empty($topicId)) {
+        sendResponse(["error" => "Topic ID is required"], 400);
+    }
+
+    $sql = "SELECT topic_id, subject, message, author,
+            DATE_FORMAT(created_at, '%Y-%m-%d') AS created_at
+            FROM topics
+            WHERE topic_id = :topic_id";
+
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':topic_id', $topicId);
+    $stmt->execute();
+
+    $topic = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($topic) {
+        sendResponse(["success" => true, "data" => $topic]);
+    } else {
+        sendResponse(["error" => "Topic not found"], 404);
+    }
+
 }
 
 
@@ -242,6 +313,7 @@ function createTopic($db, $data) {
     // If yes, return success response with 201 status (Created)
     // Include the topic_id in the response
     // If no, return error with 500 status
+
 }
 
 
@@ -257,25 +329,63 @@ function createTopic($db, $data) {
 function updateTopic($db, $data) {
     // TODO: Validate that topic_id is provided
     // If not provided, return error with 400 status
+    if (empty($data['topic_id'])) {
+        sendResponse(['error' => 'topic_id is required'], 400);
+    }
     
     // TODO: Check if topic exists
+    $topicId = $data['topic_id'];
     // Prepare and execute a SELECT query
     // If not found, return error with 404 status
+    $stmt = $db->prepare("SELECT * FROM topics WHERE topic_id = :topic_id");
+    $stmt->bindParam(':topic_id', $topicId);
+    $stmt->execute();
+    if ($stmt->rowCount() === 0) {
+        sendResponse(['error' => 'Topic not found'], 404);
+    }
     
     // TODO: Build UPDATE query dynamically based on provided fields
     // Only update fields that are provided in the request
+    $updates = [];
+    $params = [':topic_id' => $topicId];
+    if (isset($data['subject'])) {
+        $updates[] = "subject = :subject";
+        $params[':subject'] = $data['subject'];
+    }
+    if (isset($data['message'])) {
+        $updates[] = "message = :message";
+        $params[':message'] = $data['message'];
+    }
     
     // TODO: Check if there are any fields to update
     // If $updates array is empty, return error
+    if (empty($updates)) {
+        sendResponse(['error' => 'No fields to update'], 400);
+    }
     
     // TODO: Complete the UPDATE query
+    $sql = "UPDATE topics SET " . implode(", ", $updates) . " WHERE topic_id = :topic_id";
+
     
     // TODO: Prepare statement and bind parameters
+    $stmt = $db->prepare($sql);
     // Bind all parameters from the $params array
-    
+
     // TODO: Execute the query
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
     
     // TODO: Check if update was successful
+    if ($stmt->execute()) {
+        if ($stmt->rowCount() > 0) {
+            sendResponse(['message' => 'Topic updated successfully']);
+        } else {
+            sendResponse(['message' => 'No changes made to the topic']);
+        }
+    } else {
+        sendResponse(['error' => 'Failed to update topic'], 500);
+    }
     // If yes, return success response
     // If no rows affected, return appropriate message
     // If error, return error with 500 status
@@ -290,21 +400,44 @@ function updateTopic($db, $data) {
  *   - id: The topic's unique identifier
  */
 function deleteTopic($db, $topicId) {
+    if (empty($topicId)) {
+        sendResponse(['error' => 'topic_id is required'], 400);
+    }
     // TODO: Validate that topicId is provided
+    $checkTopicStmt = $db->prepare("SELECT * FROM topics WHERE topic_id = :topic_id");
+    $checkTopicStmt->bindParam(':topic_id', $topicId);
+    $checkTopicStmt->execute();
     // If not, return error with 400 status
     
     // TODO: Check if topic exists
+    if ($checkTopicStmt->rowCount() === 0) {
+        sendResponse(['error' => 'Topic not found'], 404);
+    }
     // Prepare and execute a SELECT query
     // If not found, return error with 404 status
     
     // TODO: Delete associated replies first (foreign key constraint)
+    $deleteRepliesStmt = $db->prepare("DELETE FROM replies WHERE topic_id = :topic_id");
+    $deleteRepliesStmt->bindParam(':topic_id', $topicId);
+    $deleteRepliesStmt->execute();
+
     // Prepare DELETE query for replies table
     
     // TODO: Prepare DELETE query for the topic
+    $deleteTopicStmt = $db->prepare("DELETE FROM topics WHERE topic_id = :topic_id");
+
     
     // TODO: Prepare, bind, and execute
+    $deleteTopicStmt->bindParam(':topic_id', $topicId);
+    $deleteTopicStmt->execute();
+
     
     // TODO: Check if delete was successful
+    if ($deleteTopicStmt->rowCount() > 0) {
+        sendResponse(['message' => 'Topic and associated replies deleted successfully']);
+    } else {
+        sendResponse(['error' => 'Failed to delete topic'], 500);
+    }
     // If yes, return success response
     // If no, return error with 500 status
 }
@@ -324,18 +457,28 @@ function deleteTopic($db, $topicId) {
 function getRepliesByTopicId($db, $topicId) {
     // TODO: Validate that topicId is provided
     // If not provided, return error with 400 status
-    
+    if (empty($topicId)) {
+        sendResponse(['error' => 'topic_id is required'], 400);
+    }
+    $checkTopicStmt = $db->prepare("SELECT * FROM topics WHERE topic_id = :topic_id");
+    $checkTopicStmt->bindParam(':topic_id', $topicId);
+    $checkTopicStmt->execute();
     // TODO: Prepare SQL query to select all replies for the topic
+    $stmt = $db->prepare("SELECT reply_id, topic_id, text, author, DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at FROM replies WHERE topic_id = :topic_id ORDER BY created_at ASC");
+
     // Select reply_id, topic_id, text, author, and created_at (formatted as date)
     // Order by created_at ASC (oldest first)
     
     // TODO: Prepare and bind the topic_id parameter
-    
+    $stmt->bindParam(':topic_id', $topicId);
+
     // TODO: Execute the query
-    
+    $stmt->execute();
     // TODO: Fetch all results as an associative array
-    
+    $replies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     // TODO: Return JSON response
+    sendResponse(['success' => true, 'data' => $replies]);
     // Even if no replies found, return empty array (not an error)
 }
 
@@ -354,29 +497,68 @@ function createReply($db, $data) {
     // TODO: Validate required fields
     // Check if reply_id, topic_id, text, and author are provided
     // If any field is missing, return error with 400 status
+    if (empty($data['reply_id']) || empty($data['topic_id']) || empty($data['text']) || empty($data['author'])) {
+        sendResponse(['error' => 'reply_id, topic_id, text, and author are required'], 400);
+    }
     
     // TODO: Sanitize input data
     // Trim whitespace from all fields
+    $replyId = trim($data['reply_id']);
+    $topicId = trim($data['topic_id']);
+    $text = trim($data['text']);
+    $author = trim($data['author']);
+
     
     // TODO: Verify that the parent topic exists
+    $checkTopicStmt = $db->prepare("SELECT * FROM topics WHERE topic_id = :topic_id");  
     // Prepare and execute SELECT query on topics table
+    $checkTopicStmt->bindParam(':topic_id', $topicId);
+    $checkTopicStmt->execute();
+    if ($checkTopicStmt->rowCount() === 0) {
+        sendResponse(['error' => 'Parent topic not found'], 404);
+    }
+
     // If topic doesn't exist, return error with 404 status (can't reply to non-existent topic)
+
     
     // TODO: Check if reply_id already exists
     // Prepare and execute SELECT query to check for duplicate
     // If duplicate found, return error with 409 status
+    $checkReplyStmt = $db->prepare("SELECT * FROM replies WHERE reply_id = :reply_id");
+    $checkReplyStmt->bindParam(':reply_id', $replyId);
+    $checkReplyStmt->execute();
+    if ($checkReplyStmt->rowCount() > 0) {
+        sendResponse(['error' => 'reply_id already exists'], 409);
+    }
+
     
     // TODO: Prepare INSERT query
     // Insert reply_id, topic_id, text, and author
+    $insertSql = "INSERT INTO replies (reply_id, topic_id, text, author) VALUES (:reply_id, :topic_id
+, :text, :author)";
+
     
     // TODO: Prepare statement and bind parameters
+    $stmt = $db->prepare($insertSql);
+    $stmt->bindParam(':reply_id', $replyId);
+    $stmt->bindParam(':topic_id', $topicId);
+    $stmt->bindParam(':text', $text);
+    $stmt->bindParam(':author', $author);
+
     
     // TODO: Execute the query
+    if ($stmt->execute()) {
+        sendResponse(['message' => 'Reply created successfully', 'reply_id' => $replyId], 201);
+    } else {
+        sendResponse(['error' => 'Failed to create reply'], 500);
+    }
     
     // TODO: Check if insert was successful
     // If yes, return success response with 201 status
     // Include the reply_id in the response
     // If no, return error with 500 status
+
+
 }
 
 
@@ -390,16 +572,35 @@ function createReply($db, $data) {
 function deleteReply($db, $replyId) {
     // TODO: Validate that replyId is provided
     // If not, return error with 400 status
+    if (empty($replyId)) {
+        sendResponse(['error' => 'reply_id is required'], 400);
+    }
     
     // TODO: Check if reply exists
     // Prepare and execute SELECT query
     // If not found, return error with 404 status
+    $checkReplyStmt = $db->prepare("SELECT * FROM replies WHERE reply_id = :reply_id");
+    $checkReplyStmt->bindParam(':reply_id', $replyId);
+    $checkReplyStmt->execute();
+    if ($checkReplyStmt->rowCount() === 0) {
+        sendResponse(['error' => 'Reply not found'], 404);
+    }
+
     
     // TODO: Prepare DELETE query
+    $deleteReplyStmt = $db->prepare("DELETE FROM replies WHERE reply_id = :reply_id");
+    $deleteReplyStmt->bindParam(':reply_id', $replyId);
     
     // TODO: Prepare, bind, and execute
+    $deleteReplyStmt->execute();
     
     // TODO: Check if delete was successful
+    if ($deleteReplyStmt->rowCount() > 0) {
+        sendResponse(['message' => 'Reply deleted successfully']);
+    } else {
+        sendResponse(['error' => 'Failed to delete reply'], 500);
+    }
+
     // If yes, return success response
     // If no, return error with 500 status
 }
@@ -411,13 +612,56 @@ function deleteReply($db, $replyId) {
 
 try {
     // TODO: Route the request based on resource and HTTP method
+    if ($resource === 'topics') {
+        switch ($method) {
+            case 'GET':
+
     
     // TODO: For GET requests, check for 'id' parameter in $_GET
+                if (isset($_GET['id'])) {
+                    getTopicById($db, $_GET['id']);
+                } else {
+                    getAllTopics($db);
+                }
+                break;
+            case 'POST':
+                createTopic($db, $inputData);
+                break;
+            case 'PUT':
+                updateTopic($db, $inputData);
+                break;
+            case 'DELETE':
+                deleteTopic($db, isset($_GET['id']) ? $_GET['id'] : null);
+                break;
+            default:
     
     // TODO: For DELETE requests, get id from query parameter or request body
-    
+                sendResponse(['error' => 'Method not allowed'], 405);
+                break;
+        }
+    } elseif ($resource === 'replies') {
+        switch ($method) {
+            case 'GET':
+                if (isset($_GET['topic_id'])) {
+                    getRepliesByTopicId($db, $_GET['topic_id']);
+                } else {
+                    sendResponse(['error' => 'topic_id parameter is required'], 400);
+                }
+                break;
+            case 'POST':
+                createReply($db, $inputData);
+                break;
+            case 'DELETE':
+                deleteReply($db, isset($_GET['id']) ? $_GET['id'] : null);
+                break;
+            default:
+                sendResponse(['error' => 'Method not allowed'], 405);
+                break;
+        }
+    } else {
+        sendResponse(['error' => 'Invalid resource'], 400);
+    }
     // TODO: For unsupported methods, return 405 Method Not Allowed
-    
     // TODO: For invalid resources, return 400 Bad Request
     
 } catch (PDOException $e) {
@@ -425,11 +669,15 @@ try {
     // DO NOT expose the actual error message to the client (security risk)
     // Log the error for debugging (optional)
     // Return generic error response with 500 status
+    sendResponse(['error' => 'Database error occurred'], 500);
+
     
 } catch (Exception $e) {
     // TODO: Handle general errors
     // Log the error for debugging
     // Return error response with 500 status
+    sendResponse(['error' => 'An unexpected error occurred'], 500);
+
 }
 
 
@@ -445,11 +693,14 @@ try {
  */
 function sendResponse($data, $statusCode = 200) {
     // TODO: Set HTTP response code
+    http_response_code($statusCode);
     
     // TODO: Echo JSON encoded data
     // Make sure to handle JSON encoding errors
+    echo json_encode($data);
     
     // TODO: Exit to prevent further execution
+    exit();
 }
 
 
@@ -462,14 +713,17 @@ function sendResponse($data, $statusCode = 200) {
 function sanitizeInput($data) {
     // TODO: Check if data is a string
     // If not, return as is or convert to string
-    
+    if (!is_string($data)) {
+        return $data;
+    }
     // TODO: Trim whitespace from both ends
-    
+    $data = trim($data);
     // TODO: Remove HTML and PHP tags
-    
+    $data = strip_tags($data);
     // TODO: Convert special characters to HTML entities (prevents XSS)
-    
+    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     // TODO: Return sanitized data
+    return $data;
 }
 
 
@@ -481,8 +735,12 @@ function sanitizeInput($data) {
  */
 function isValidResource($resource) {
     // TODO: Define allowed resources
+    $allowedResources = ['topics', 'replies'];
+
     
     // TODO: Check if resource is in the allowed list
+    return in_array($resource, $allowedResources);
+
 }
 
 ?>
