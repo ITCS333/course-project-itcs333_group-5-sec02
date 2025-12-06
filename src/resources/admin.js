@@ -110,9 +110,11 @@ event.preventDefault();
  */
 function handleTableClick(event) {
   // ... your implementation here ...
-
-
-  
+if (event.target.classList.contains("delete-btn")) {
+  const id = event.target.getAttribute("data-id");
+   resources = resources.filter(resource => resource.id !== id);
+   renderTable();
+    }
 }
 
 /**
