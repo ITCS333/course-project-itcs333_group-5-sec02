@@ -160,8 +160,9 @@ async function initializePage() {
 
     const resources = await resResponse.json();
     const commentsObj = await commentsResponse.json();
-
-    const resource = resources.find((r) => r.id === currentResourceId);
+   
+//const resource = resources.find((r) => r.id === currentResourceId);
+    const resource = resources.find((r) => Number(r.id) === Number(currentResourceId));// changed
     currentComments = commentsObj[currentResourceId] || [];
 
     if (resource) {
