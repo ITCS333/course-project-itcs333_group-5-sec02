@@ -139,7 +139,7 @@ if (event.target.classList.contains("delete-btn")) {
 // --- Initial Page Load ---
 // Call the main async function to start the application.
 async function loadAndInitialize() {
-  const response = await fetch("resources.json");
+  const response = await fetch("api/resources.json");
   resources = await response.json();
 
   renderTable();
