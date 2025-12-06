@@ -154,15 +154,14 @@ async function initializePage() {
 }
  try {
     const [resResponse, commentsResponse] = await Promise.all([
-      fetch("./api/resources.json"),
-      fetch("./api/comments.json")
+      fetch("resources.json"),
+      fetch("resource-comments.json")
     ]);
 
     const resources = await resResponse.json();
     const commentsObj = await commentsResponse.json();
-   
-//const resource = resources.find((r) => r.id === currentResourceId);
-    const resource = resources.find((r) => Number(r.id) === Number(currentResourceId));// changed
+
+    const resource = resources.find((r) => r.id === currentResourceId);
     currentComments = commentsObj[currentResourceId] || [];
 
     if (resource) {
