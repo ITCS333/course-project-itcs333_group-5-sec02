@@ -37,23 +37,22 @@ let tbody = document.getElementById("weeks-tbody");
 function createWeekRow(week) {
   // ... your implementation here ...
   // 
-let week={ id , title , description }
 let tr=document.createElement("tr");
 
 let tdtitle=document.createElement("td");
-tdtitle.textContant=week.title;
+tdtitle.textContent=week.title;
 
 let tddescription=document.createElement("td");
-tddescription.textContant=week.description;
+tddescription.textContent=week.description;
 
 let tdbutton=document.createElement("td");
 let editbutton=document.createElement("button");
-editbutton.textContant="Edit";
+editbutton.textContent="Edit";
 editbutton.classList.add("edit-btn");
 editbutton.setAttribute("data-id", week.id);
 
 let deletebutton=document.createElement("button");
-deletebutton.textContant="delete";
+deletebutton.textContent="delete";
 deletebutton.classList.add("delete-btn");
 deletebutton.setAttribute("data-id" , week.id);
 
@@ -107,13 +106,12 @@ function handleAddWeek(event) {
 
     let weekslink = document.getElementById('week-links').value;
     let links1 = weekslink.split('\n');
-    links = [] ;
 
     let newweek = {
       id : `week_${Date.now()}` ,
-      title : title ,
-      startDate : startDate ,
-      description : description ,
+      title : t ,
+      startDate : sd ,
+      description : d ,
       links : links1
      };
 
@@ -136,8 +134,8 @@ event.target.reset();
 function handleTableClick(event) {
   // ... your implementation here ...
   if(event.target.classList.contains('delete-btn')){
-    let date = event.target.getAttribute('date-id');
-    weeks = weeks.filter(week => week.id!==weekId)
+    let weekId = event.target.getAttribute('data-id');
+    weeks = weeks.filter(week => week.id!==weekId);
       renderTable();
   }
 

@@ -83,14 +83,15 @@ function createCommentArticle(comment) {
   // ... your implementation here ...
   let article = document.createElement('article');
 
-  let authorp = document.createElement('p');
-  authorp.textContent = comment.author;
-
   let textp = document.createElement('p');
   textp.textContent = comment.text;
 
-  article.appendChild(authorp);
+  let footer = document.createElement('footer');
+  footer.textContent = `Posted by: ${comment.author}`;
+
   article.appendChild(textp);
+  article.appendChild(footer);
+
   return article;
 
 }
@@ -157,17 +158,17 @@ function handleAddComment(event) {
  */
 async function initializePage() {
   // ... your implementation here ...
-  currentAssignmentId = getAssignmentIdFromURL();
+  currentAssignmentId = Number(getAssignmentIdFromURL()); // CHANGED 
   if(!currentAssignmentId){
     alert('No assignment ID');
     return;
   }
   let [assignments, commentsData] = await Promise.all([
-    fetch('assignment.json').then(r=> r.json()),
+    fetch('assignments.json').then(r=> r.json()),
     fetch('comments.json').then(r=> r.json())
   ]);
   
-  let assignment = assignments.find(a=> a.id === currentAssignmentId);
+  let assignment = assignments.find(a => a.id === currentAssignmentId);  // CHANGED 
   currentComments = commentsData[currentAssignmentId] || [];
 
   if(assignment){

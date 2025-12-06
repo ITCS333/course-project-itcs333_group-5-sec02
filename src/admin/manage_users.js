@@ -29,6 +29,11 @@ let students = [];
 // (You'll need to add id="search-input" to this input in your HTML).
 
 // TODO: Select all table header (th) elements in thead.
+const studentTableBody = document.querySelector("#student-table tbody");
+const addStudentForm = document.querySelector("#add-student-form");
+const changePasswordForm = document.querySelector("#password-form");
+const searchInput = document.querySelector("#search-input");
+const tableHeaders = document.querySelectorAll("#student-table thead th");
 
 // --- Functions ---
 
@@ -45,6 +50,17 @@ let students = [];
  */
 function createStudentRow(student) {
   // ... your implementation here ...
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${student.name}</td>
+    <td>${student.id}</td>
+    <td>${student.email}</td>
+    <td>
+      <button class="edit-btn" data-id="${student.id}">Edit</button>
+      <button class="delete-btn" data-id="${student.id}">Delete</button>
+    </td>
+  `;
+  return tr;
 }
 
 /**
@@ -57,6 +73,11 @@ function createStudentRow(student) {
  */
 function renderTable(studentArray) {
   // ... your implementation here ...
+  studentTableBody.innerHTML = "";
+  studentArray.forEach(student => {
+    const row = createStudentRow(student);
+    studentTableBody.appendChild(row);
+  });
 }
 
 /**
@@ -73,6 +94,23 @@ function renderTable(studentArray) {
  */
 function handleChangePassword(event) {
   // ... your implementation here ...
+  event.preventDefault();
+  const current = document.querySelector("#current-password").value;
+  const newPass = document.querySelector("#new-password").value;
+  const confirm = document.querySelector("#confirm-password").value;
+
+  if (newPass !== confirm) {
+    alert("Passwords do not match.");
+    return;
+  }
+  if (newPass.length < 8) {
+    alert("Password must be at least 8 characters.");
+    return;
+  }
+  alert("Password updated successfully!");
+  document.querySelector("#current-password").value = "";
+  document.querySelector("#new-password").value = "";
+  document.querySelector("#confirm-password").value = "";
 }
 
 /**
@@ -92,6 +130,30 @@ function handleChangePassword(event) {
  */
 function handleAddStudent(event) {
   // ... your implementation here ...
+  event.preventDefault();
+  const name = document.querySelector("#student-name").value.trim();
+  const id = Number(document.querySelector("#student-id").value.trim());
+  const email = document.querySelector("#student-email").value.trim();
+  
+  if (!name || !id || !email) {
+    alert("Please fill out all required fields.");
+    return;
+  }
+
+  if (students.some(s => s.id === id)) {
+    alert("A student with this ID already exists.");
+    return;
+}
+
+  const newStudent = { name, id, email };
+  students.push(newStudent);
+  renderTable(students);
+
+  // Clear inputs
+  document.querySelector("#student-name").value = "";
+  document.querySelector("#student-id").value = "";
+  document.querySelector("#student-email").value = "";
+  document.querySelector("#default-password").value = "password123";
 }
 
 /**
@@ -107,6 +169,11 @@ function handleAddStudent(event) {
  */
 function handleTableClick(event) {
   // ... your implementation here ...
+  if (event.target.classList.contains("delete-btn")) {
+    const id = Number(event.target.dataset.id);
+    students = students.filter(s => s.id !== id);
+    renderTable(students);
+  }
 }
 
 /**
@@ -122,6 +189,13 @@ function handleTableClick(event) {
  */
 function handleSearch(event) {
   // ... your implementation here ...
+  const term = searchInput.value.toLowerCase();
+  if (!term) {
+    renderTable(students);
+    return;
+  }
+  const filtered = students.filter(s => s.name.toLowerCase().includes(term));
+  renderTable(filtered);
 }
 
 /**
@@ -140,6 +214,26 @@ function handleSearch(event) {
  */
 function handleSort(event) {
   // ... your implementation here ...
+  const th = event.currentTarget;
+  const index = th.cellIndex;
+  let prop;
+  if (index === 0) prop = "name";
+  else if (index === 1) prop = "id";
+  else if (index === 2) prop = "email";
+  else return;
+
+  const dir = th.dataset.sortDir === "asc" ? "desc" : "asc";
+  th.dataset.sortDir = dir;
+
+  students.sort((a, b) => {
+    if (prop === "id") {
+      return dir === "asc" ? a.id - b.id : b.id - a.id;
+    } else {
+      return dir === "asc" ? a[prop].localeCompare(b[prop]) : b[prop].localeCompare(a[prop]);
+    }
+  });
+
+  renderTable(students);
 }
 
 /**
@@ -160,6 +254,21 @@ function handleSort(event) {
  */
 async function loadStudentsAndInitialize() {
   // ... your implementation here ...
+  try {
+    const response = await fetch("api/students.json");
+    if (!response.ok) throw new Error("Failed to fetch students.json");
+    students = await response.json();
+    renderTable(students);
+
+    // Event listeners
+    changePasswordForm.addEventListener("submit", handleChangePassword);
+    addStudentForm.addEventListener("submit", handleAddStudent);
+    studentTableBody.addEventListener("click", handleTableClick);
+    searchInput.addEventListener("input", handleSearch);
+    tableHeaders.forEach(th => th.addEventListener("click", handleSort));
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // --- Initial Page Load ---

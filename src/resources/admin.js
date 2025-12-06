@@ -17,9 +17,9 @@ let resources = [];
 
 // --- Element Selections ---
 // TODO: Select the resource form ('#resource-form').
-
+const resourceForm = document.querySelector("#resource-form");
 // TODO: Select the resources table body ('#resources-tbody').
-
+const resourcesTableBody = document.querySelector("#resources-tbody");
 // --- Functions ---
 
 /**
@@ -34,6 +34,17 @@ let resources = [];
  */
 function createResourceRow(resource) {
   // ... your implementation here ...
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${resource.title}</td>
+    <td>${resource.description}</td>
+    <td>
+      <button class="edit-btn" data-id="${resource.id}">Edit</button>
+      <button class="delete-btn" data-id="${resource.id}">Delete</button>
+    </td>
+  `;
+
+  return tr;
 }
 
 /**
@@ -46,6 +57,12 @@ function createResourceRow(resource) {
  */
 function renderTable() {
   // ... your implementation here ...
+  resourcesTableBody.innerHTML = "";
+
+  resources.forEach((res) => {
+    const row = createResourceRow(res);
+    resourcesTableBody.appendChild(row);
+  });
 }
 
 /**
@@ -61,6 +78,24 @@ function renderTable() {
  */
 function handleAddResource(event) {
   // ... your implementation here ...
+event.preventDefault();
+
+  const title = resourceForm.title.value.trim();
+  const description = resourceForm.description.value.trim();
+  const link = resourceForm.link.value.trim();
+
+   if (!title || !description) return;
+
+  const newResource = {
+    id: resources.length ? Math.max(...resources.map(r => Number(r.id))) + 1 : 1,
+    title,
+    description,
+    link
+  };
+
+  resources.push(newResource);
+  renderTable();
+  resourceForm.reset();
 }
 
 /**
@@ -75,6 +110,9 @@ function handleAddResource(event) {
  */
 function handleTableClick(event) {
   // ... your implementation here ...
+
+
+  
 }
 
 /**
@@ -89,8 +127,24 @@ function handleTableClick(event) {
  */
 async function loadAndInitialize() {
   // ... your implementation here ...
+if (event.target.classList.contains("delete-btn")) {
+    const id = event.target.dataset.id;
+
+    resources = resources.filter((res) => res.id !== id);
+
+    renderTable();
+  }
 }
 
 // --- Initial Page Load ---
 // Call the main async function to start the application.
+async function loadAndInitialize() {
+  const response = await fetch("api/resources.json");
+  resources = await response.json();
+
+  renderTable();
+
+  resourceForm.addEventListener("submit", handleAddResource);
+  resourcesTableBody.addEventListener("click", handleTableClick);
+}
 loadAndInitialize();

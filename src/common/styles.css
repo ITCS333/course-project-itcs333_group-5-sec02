@@ -1,1 +1,212 @@
 /* CSS Styles */
+/* CSS Styles */
+/* ==================== Global Rules ==================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Segoe UI", sans-serif;
+    line-height: 1.6;
+    background-color: #f1f8f4; /* Light green tint */
+    color: #1b3c2d;
+}
+
+/* ==================== Header ==================== */
+
+header {
+    background: #2e7d32; /* Green */
+    color: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    margin-bottom: 1.5rem;
+}
+
+header h1,
+header h2 {
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ==================== Main ==================== */
+
+main {
+    max-width: 960px;
+    margin: 0 auto 2.5rem auto;
+    padding: 0 1rem;
+}
+
+section {
+    background: #ffffff;
+    padding: 1.3rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.08);
+    border-left: 6px solid #4caf50; /* Green stripe */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+}
+
+/* ==================== Form Styling ==================== */
+
+fieldset {
+    border: 1px solid #a5d6a7;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    background-color: #f5fdf6;
+}
+
+legend {
+    font-weight: 600;
+    padding: 0 0.3rem;
+    color: #2e7d32;
+}
+
+label {
+    display: block;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+    color: #1b5e20;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #a5d6a7;
+    font: inherit;
+    margin-bottom: 0.5rem;
+    background-color: #ffffff;
+}
+
+input:focus,
+textarea:focus {
+    outline: 2px solid #4caf50;
+}
+
+/* ==================== Buttons ==================== */
+
+button,
+input[type="submit"] {
+    padding: 0.55rem 1rem;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: #43a047; /* Green */
+    color: #ffffff;
+    margin-top: 0.75rem;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+button:hover {
+    background-color: #2e7d32;
+    transform: translateY(-2px);
+}
+
+.edit-btn {
+    background-color: #8bc34a;
+}
+
+.edit-btn:hover {
+    background-color: #7cb342;
+}
+
+.delete-btn {
+    background-color: #e53935;
+}
+
+.delete-btn:hover {
+    background-color: #c62828;
+}
+
+/* ==================== Tables ==================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background-color: #c8e6c9;
+}
+
+th, td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9fff9;
+}
+
+/* ==================== Links ==================== */
+
+a {
+    color: #2e7d32;
+    font-weight: 500;
+}
+
+a:hover {
+    color: #1b5e20;
+    text-decoration: underline;
+}
+
+/* ==================== Home Page Navigation Hover Effect ==================== */
+
+nav ul li {
+    background-color: #e8f5e9;
+    padding: 0.8rem;
+    border-radius: 10px;
+    margin-bottom: 0.6rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+nav ul li:hover {
+    background-color: #c8e6c9;
+    transform: translateX(5px);
+}
+
+/* ==================== Articles ==================== */
+
+article {
+    background-color: #ffffff;
+    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    border-left: 6px solid #66bb6a;
+    box-shadow: 0 1px 6px rgba(56, 142, 60, 0.15);
+    transition: 0.2s ease;
+}
+
+article:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(56, 142, 60, 0.25);
+}
+
+/* ==================== Discussion & Replies ==================== */
+
+.comment,
+.reply {
+    background-color: #f1f8f4;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #4caf50;
+    margin-bottom: 0.75rem;
+}
