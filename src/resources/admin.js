@@ -87,7 +87,7 @@ event.preventDefault();
    if (!title || !description) return;
 
   const newResource = {
-    id: `res_${Date.now()}`,
+    id: resources.length ? Math.max(...resources.map(r => Number(r.id))) + 1 : 1,
     title,
     description,
     link
