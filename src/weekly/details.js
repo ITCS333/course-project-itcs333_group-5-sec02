@@ -24,13 +24,13 @@ let currentComments = [];
 
 // --- Element Selections ---
 // TODO: Select all the elements you added IDs for in step 2.
-let weekTitle=document.getElementById("week-title");
-let strtdate=document.getElementById("week-start-date");
-let description=document.getElementById("week-description");
-let exre=document.getElementById("week-links-list");
-let div1=document.getElementById("comment-list");
-let form1=document.getElementById("comment-form");
-let texta=document.getElementById("new-comment-text");
+let weekTitle = document.getElementById("week-title");
+let weekStartDate = document.getElementById("week-start-date");
+let weekDescription = document.getElementById("week-description");
+let weekLinksList = document.getElementById("week-links-list");
+let commentList = document.getElementById("comment-list");
+let commentForm = document.getElementById("comment-form");
+let newCommentText = document.getElementById("new-comment-text");
 // --- Functions ---
 
 /**
@@ -42,9 +42,8 @@ let texta=document.getElementById("new-comment-text");
  */
 function getWeekIdFromURL() {
   // ... your implementation here ...
-  let q = window.location.search;
-  let id = new URLSearchParams(q);
-  return id; //it tells the user which week the user wants to edit or view
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id"); //it tells the user which week the user wants to edit or view
 }
 
 /**
@@ -60,18 +59,23 @@ function getWeekIdFromURL() {
  */
 function renderWeekDetails(week) {
   // ... your implementation here ...
-  weekTitle.textContent= "week's Title";
-  strtdate.textContent = "Start on:" + week.strtdate ;
-  description.textContent = week.description;
-  exre.innerHTML= "";
-  week.links.forEach( link => {
-  let li=document.createElement("li");
-  let a=document.createElement("a");
+  weekTitle.textContent = week.title;
+  weekStartDate.textContent = "Starts on: " + week.startDate;
+  weekDescription.textContent = week.description;
+
+  weekLinksList.innerHTML = "";
+  if (week.links && week.links.length) {
+    week.links.forEach(link => {
+      let li = document.createElement("li");
+      let a = document.createElement("a");
       a.href = link;
       a.textContent = link;
+      a.target = "_blank";
       li.appendChild(a);
-      exre.appendChild(li);
-});
+      weekLinksList.appendChild(li);
+    });
+  }
+    
   }
 
 /**
@@ -82,11 +86,11 @@ function renderWeekDetails(week) {
  */
 function createCommentArticle(comment) {
   // ... your implementation here ...
-  let article = document.createElement("article");
-  let p =  document.createElement("p");
-  p.textContent = comment.text; //comment object
-  let footer = document.createElement("footer");
-  footer.textContent = `-${comment.author}`; //comment object
+  const article = document.createElement("article");
+  const p = document.createElement("p");
+  p.textContent = comment.text;
+  const footer = document.createElement("footer");
+  footer.textContent = `- ${comment.author}`;
   article.appendChild(p);
   article.appendChild(footer);
   return article;
@@ -103,12 +107,11 @@ function createCommentArticle(comment) {
  */
 function renderComments() {
   // ... your implementation here ...
-  div1.innerHTML="";
-  for( i=0 ; i<currentComments ; i++){
-    let comment=currentComments[i];
-    let article = comment.createCommentArticle(comment);
-    comment.appendChild(article);
-  }
+ commentList.innerHTML = "";
+  currentComments.forEach(comment => {
+    const article = createCommentArticle(comment);
+    commentList.appendChild(article);
+  });
 }
 
 /**
@@ -126,17 +129,18 @@ function renderComments() {
  */
 function handleAddComment(event) {
   // ... your implementation here ...
-  event.preventDefault();
-  let text1=newCommentText.value.trim();
-  if(text === ""){
-    return;
-  }
-  let newcomment = {
-    author : "student" , text : text1
+ event.preventDefault();
+  const commentText = newCommentText.value.trim();
+  if (commentText === "") return;
+
+  const newComment = {
+    author: "Student",
+    text: commentText
   };
-   currentComments.push(newcomment);
-   renderComments();
-   newCommentText.value="";
+
+  currentComments.push(newComment);
+  renderComments();
+  newCommentText.value = "";
 }
 
 /**
@@ -158,37 +162,35 @@ function handleAddComment(event) {
  */
 async function initializePage() {
   // ... your implementation here ...
-  let currentweekid= getWeekIdFromURL();
-  if(!currentweekid){
-    weekTitle.textContent="Week not found ";
+  currentWeekId = getWeekIdFromURL();
+  if (!currentWeekId) {
+    weekTitle.textContent = "Week not found.";
     return;
   }
-    let resp = await Promise.all([
-      fetch("week.json"),
-      fetch("week-comment.json")
+
+  try {
+    const [weeksResp, commentsResp] = await Promise.all([
+      fetch("weeks.json"),
+      fetch("week-comments.json")
     ]);
-    let weeks = await resp[0].json();
-    let commentObj = await resp[1].json();
-    let week = null;
-    for( let i=0 ; i<weeks.lenght ; i++){
-      if(String(weeks[i].id)===String(currentWeekId)){
-        week=weeks[i];
-        break;
-      }
-    }
-    if(commentObj[currentWeekId]){
-      currentComments = commentObj[currentWeekId];  
-    }
-    else {
-      currentComments = [];
-    }
-    if(week){
+
+    const weeks = await weeksResp.json();
+    const commentsObj = await commentsResp.json();
+
+    const week = weeks.find(w => String(w.id) === String(currentWeekId));
+    currentComments = commentsObj[currentWeekId] || [];
+
+    if (week) {
       renderWeekDetails(week);
       renderComments();
-      commentForm.addEventListener("submit" , handleAddComment);
+      commentForm.addEventListener("submit", handleAddComment);
     } else {
- weekTitle.textContent = "week not found.";
+      weekTitle.textContent = "Week not found.";
     }
+  } catch (error) {
+    console.error(error);
+    weekTitle.textContent = "Error loading week data.";
+  }
 
 }
 
