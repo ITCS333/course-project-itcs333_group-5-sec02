@@ -158,7 +158,7 @@ function handleAddComment(event) {
  */
 async function initializePage() {
   // ... your implementation here ...
-  currentAssignmentId = getAssignmentIdFromURL();
+  currentAssignmentId = Number(getAssignmentIdFromURL()); // CHANGED 
   if(!currentAssignmentId){
     alert('No assignment ID');
     return;
@@ -168,7 +168,7 @@ async function initializePage() {
     fetch('comments.json').then(r=> r.json())
   ]);
   
-  let assignment = assignments.find(a=> a.id === currentAssignmentId);
+  let assignment = assignments.find(a => a.id === currentAssignmentId);  // CHANGED 
   currentComments = commentsData[currentAssignmentId] || [];
 
   if(assignment){
