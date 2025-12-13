@@ -273,9 +273,14 @@ function deleteStudent($db, $id) {
     $stmt->bindValue(":id", $id);
     $stmt->execute();
 
-    if(!$stmt->fetch()) {
-        sendResponse(["success" => false, "message" => "Student not found"], 404);
-    }
+    //if(!$stmt->fetch()) {
+    //    sendResponse(["success" => false, "message" => "Student not found"], 404);
+   // }
+// ===== FIX TASK1615 =====
+if ($stmt->execute()) {
+    http_response_code(204);
+    exit();
+}
 
     $stmt = $db->prepare("DELETE FROM students WHERE id=:id");
     $stmt->bindValue(":id", $id);
