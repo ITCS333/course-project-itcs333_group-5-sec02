@@ -1,4 +1,5 @@
 <?php
+session_start();
 /**
  * Assignment Management API
  * 
@@ -38,7 +39,6 @@
 // ============================================================================
 // HEADERS AND CORS CONFIGURATION
 // ============================================================================
-session_start();
 
 
 // TODO: Set Content-Type header to application/json
