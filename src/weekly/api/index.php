@@ -588,9 +588,11 @@ try {
         } elseif ($method === 'DELETE') {
             // TODO: Get week_id from query parameter or request body
             // Call deleteWeek()
-            if (!$week_id) sendError("Missing week_id", 400);
+            if (!$week_id && isset($data['week_id'])) {
+                $week_id = $data['week_id'];
+            }
+             if (!$week_id) sendError("Missing week_id", 400);
             deleteWeek($db, $week_id);
-            
         } else {
             // TODO: Return error for unsupported methods
             // Set HTTP status to 405 (Method Not Allowed)
@@ -612,6 +614,9 @@ try {
         } elseif ($method === 'DELETE') {
             // TODO: Get comment id from query parameter or request body
             // Call deleteComment()
+            if (!$id && isset($data['id'])) {
+                $id = $data['id'];
+            }
             if (!$id) sendError("Missing comment id", 400);
             deleteComment($db, $id);
         } else {
@@ -656,20 +661,20 @@ try {
  * @param mixed $data - Data to send (will be JSON encoded)
  * @param int $statusCode - HTTP status code (default: 200)
  */
-function sendResponse($success , $message , $data = null, $statusCode = 200) {
+//function sendResponse($success , $message , $data = null, $statusCode = 200) {
     // TODO: Set HTTP response code
     // Use http_response_code($statusCode)
     // TODO: Echo JSON encoded data
     // Use json_encode($data)
-    http_response_code($statusCode);
-    echo json_encode([
-        "success" => $success,
-        "message" => $message,
-        "data" => $data
-    ], JSON_UNESCAPED_UNICODE);
+    //http_response_code($statusCode);
+    //echo json_encode([
+        //"success" => $success,
+        //"message" => $message,
+        //"data" => $data
+    //], JSON_UNESCAPED_UNICODE);
     // TODO: Exit to prevent further execution
-    exit();
-}
+    //exit();
+//}
 
 
 /**
@@ -685,9 +690,9 @@ function sendResponse($success , $message , $data = null, $statusCode = 200) {
     // TODO: Call sendResponse() with the error array and status code
     
 //}
-function sendError($message, $statusCode = 400) {
-    sendResponse(false, $message, null, $statusCode);
-}
+//function sendError($message, $statusCode = 400) {
+    //sendResponse(false, $message, null, $statusCode);
+//}
 
 
 /**
