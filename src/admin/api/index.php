@@ -198,8 +198,29 @@ function createStudent($db, $data) {
 function updateStudent($db, $data) {
 
     // NOTE: CHANGED
-    $id = intval($data['id'] ?? 0);
-    if($id <= 0) sendResponse(["success" => false, "message" => "id required"], 400);
+    //$id = intval($data['id'] ?? 0);
+    //if($id <= 0) sendResponse(["success" => false, "message" => "id required"], 400);
+    // ===== FIX TASK1601 =====
+
+$id = intval(
+    $data['id']
+    ?? $_GET['id']
+    ?? 0
+);
+
+
+if ($id <= 0 && !empty($data['student_id'])) {
+    $stmt = $db->prepare("SELECT id FROM students WHERE student_id = :student_id");
+    $stmt->bindValue(":student_id", $data['student_id']);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $id = intval($row['id'] ?? 0);
+}
+
+if ($id <= 0) {
+    sendResponse(["success" => false, "message" => "id required"], 400);
+}
+
 
     $stmt = $db->prepare("SELECT * FROM students WHERE id=:id");
     $stmt->bindValue(":id", $id);
