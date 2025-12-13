@@ -269,9 +269,6 @@ function createAssignment($db, $data) {
 
     
     // TODO: Generate a unique assignment ID
-    // $assignmentId = 'asg_' . bin2hex(random_bytes(4));
-    INSERT INTO assignments (id, title, description, due_date, files, created_at, updated_at)
-VALUES (:id, :title, :description, :due_date, :files, NOW(), NOW()) //CHANGED 
 
     // TODO: Handle the 'files' field
     $files = [];
