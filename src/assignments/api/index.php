@@ -297,7 +297,7 @@ VALUES (:id, :title, :description, :due_date, :files, NOW(), NOW()) //CHANGED
     
     // TODO: Execute the statement
     $stmt->execute();
-
+    $newId = $db->lastInsertId();
     
     // TODO: Check if insert was successful
     if ($stmt->rowCount() > 0) {
