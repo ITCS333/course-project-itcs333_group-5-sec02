@@ -21,7 +21,6 @@ let weeks = [];
 // TODO: Select the weeks table body ('#weeks-tbody').
 const form = document.getElementById("week-form");
 const tbody = document.getElementById("weeks-tbody");
-
 const titleInput = document.getElementById("week-title");
 const startDateInput = document.getElementById("week-start-date");
 const descInput = document.getElementById("week-description");
@@ -109,7 +108,10 @@ function handleAddWeek(event) {
   const startDate = startDateInput.value;
   const description = descInput.value.trim();
 
-  if (!title || !startDate) return;
+  if (!title || !startDate){
+    alert("Title and start date are required!");
+        return;
+  }
 
   const links = linksInput.value
     .split("\n")
@@ -143,22 +145,25 @@ form.reset();
 function handleTableClick(event) {
   // ... your implementation here ...
   const id = event.target.dataset.id;
-
+if (!id) return;
   // DELETE
   if (event.target.classList.contains("delete-btn")) {
+    if (confirm("Are you sure you want to delete this week?")) {
     weeks = weeks.filter(w => w.id !== id);
     renderTable();
+  }
   }
   if (event.target.classList.contains("edit-btn")) {
     const week = weeks.find(w => w.id === id);
     if (!week) return;
 titleInput.value = week.title;
     startDateInput.value = week.startDate;
-    descInput.value = week.description;
+    descInput.value = week.description || "";
     linksInput.value = (week.links || []).join("\n");
 
     // remove old version, will be replaced on submit
     weeks = weeks.filter(w => w.id !== id);
+    renderTable();
   }
 }
 
@@ -175,11 +180,15 @@ titleInput.value = week.title;
 async function loadAndInitialize() {
   // ... your implementation here ...
   try {
-    const response = await fetch("weeks.json");
-    weeks = await response.json();
+    const response = await fetch("../data/weeks.json");
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+     weeks = await response.json();
   } catch (error) {
     console.error("Error loading weeks:", error);
     weeks = [];
+    tbody.innerHTML = `<tr><td colspan="3" class="text-danger">Failed to load weeks: ${error.message}</td></tr>`;
   }
 
   renderTable();
