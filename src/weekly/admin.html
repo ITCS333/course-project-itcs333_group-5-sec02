@@ -35,45 +35,47 @@
                 <!-- TODO: Use a 'fieldset' to group the form controls. -->
                     <!-- TODO: Add a 'legend', e.g., "Weekly Details". -->
 <form id="week-form" action="#" class="row gy-2 gx-3 align-items-center">
-                    <fieldset id="zakeya-f" class="p-3 border rounded" disabled>
-                        <legend id="zakeya-l" class="fw-bold">Weekly Details</legend>
+                    <fieldset class="p-3 border rounded">
+                        <legend class="fw-bold">Weekly Details</legend>
                     <!-- TODO: Add a 'label' and 'input' for the week's title.
                          - label 'for': "week-title"
                          - input 'id': "week-title", type="text", required
                          - Example placeholder: "Week 1: Introduction to HTML" -->
 <div class="mb-3">
-                    <label class="form-label" for="week-title">Week Title:</label>
-                    <input class="form-control" id="week-title" type="text" required placeholder="Write Week title">
+                    <label for="week-title" class="form-label">Week Title:</label>
+                    <input type="text" id="week-title" class="form-control" placeholder="Week 1: Introduction to HTML" required >
                     </div>
                     <!-- TODO: Add a 'label' and 'input' for the week's starting date.
                          - label 'for': "week-start-date"
                          - input 'id': "week-start-date", type="date", required -->
                          <div class="mb-3">
-                    <label class="form-label" for="week-start-date">Week start date:</label>
-                   <input class="form-control" id="week-start-date" type="date" required>
+                    <label for="week-start-date" class="form-label">Week start date:</label>
+                   <input type="date" id="week-start-date" class="form-control" required>
                    </div>
                     <!-- TODO: Add a 'label' and 'textarea' for the week's description and notes.
                          - label 'for': "week-description"
                          - textarea 'id': "week-description", rows="5" -->
                          <div class="mb-3">
-                   <label class="form-label" for="week-description">Week's Description:</label>
-                   <textarea class="form-control" id="week-description" rows="5" placeholder="Enter week description"></textarea>
+                   <label for="week-description" class="form-label">Week's Description & Notes:</label>
+                   <textarea id="week-description" class="form-control" rows="5" placeholder="Enter week description"></textarea>
                    </div>
                     <!-- TODO: Add a 'label' and 'textarea' for links to exercises or resources (one link per line).
                          - label 'for': "week-links"
                          - textarea 'id': "week-links", rows="3" -->
                          <div class="mb-3">
-            <label class="form-label" for="week-links">Week Links:</label>
-            <textarea class="form-control" id="week-links" rows="3" placeholder="Enter one link per line"></textarea>
+            <label for="week-links" class="form-label">Week Links:</label>
+            <textarea id="week-links" class="form-control" rows="3" placeholder="Enter one link per line"></textarea>
+  
             </div>
+                      <button type="submit" id="add-week" class="btn btn-outline-dark">Add Week</button>
                     <!-- TODO: Add a 'button' to submit the form.
                          - id="add-week", type="submit", Text: "Add Week" -->
                 <!-- End of fieldset. -->
             <!-- End of form. -->
         <!-- End of form section. -->
-         <div class="mb-3">
-            <button class="btn btn-outline-dark" id="add-week" type="submit">Add Week</button>
-            </div>
+        
+        
+          
                     </fieldset>
         </form>
         </section>
@@ -103,8 +105,8 @@
         <td>Week 1: Introduction to HTML</td>
         <td>Introductory concepts of HTML</td>
         <td>
-            <button class="btn btn-outline-dark" class="edit-btn">Edit</button>
-            <button class="btn btn-outline-dark" class="delete-btn">Delete</button>
+            <button class="btn btn-outline-dark btn-sm me-2 edit-btn" data-id="week_1">Edit</button>
+<button class="btn btn-outline-danger btn-sm delete-btn" data-id="week_1">Delete</button>
         </td>
     </tr>
                         <!-- TODO: Add a 'td' containing the action buttons. -->
@@ -116,8 +118,9 @@
                         <td>Week 2: Introduction to CSS</td>
                         <td>Basic styling with CSS</td>
                         <td>
-                            <button class="btn btn-outline-dark" class="edit-btn">Edit</button>
-                            <button class="btn btn-outline-dark" class="delete-btn">Delete</button>
+                            <button class="btn btn-outline-dark btn-sm me-2 edit-btn" data-id="week_2">Edit</button>
+                            <button class="btn btn-outline-danger btn-sm delete-btn" data-id="week_2">Delete</button>
+
                         </td>
                     </tr>
 </tbody>
