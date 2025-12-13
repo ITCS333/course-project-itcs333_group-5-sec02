@@ -38,6 +38,8 @@
 // ============================================================================
 // HEADERS AND CORS CONFIGURATION
 // ============================================================================
+session_start();
+
 
 // TODO: Set Content-Type header to application/json
 header("Content-Type: application/json");
