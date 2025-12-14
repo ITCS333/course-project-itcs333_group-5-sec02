@@ -31,6 +31,7 @@
             <!-- TODO: Add a sub-heading ('h2') "Add a New Week". -->
 <section class="container" style="max-width:700px;">
                 <h2 class="display-6">Add a new week</h2>
+  <div class="mb-3">
             <!-- TODO: Create a 'form' with an id "week-form". Action can be '#'. -->
                 <!-- TODO: Use a 'fieldset' to group the form controls. -->
                     <!-- TODO: Add a 'legend', e.g., "Weekly Details". -->
@@ -41,10 +42,10 @@
                          - label 'for': "week-title"
                          - input 'id': "week-title", type="text", required
                          - Example placeholder: "Week 1: Introduction to HTML" -->
-<div class="mb-3">
+                      <div class="form-group">
                     <label for="week-title" class="form-label">Week Title:</label>
                     <input type="text" id="week-title" class="form-control" placeholder="Week 1: Introduction to HTML" required >
-                    </div>
+                      </div>
                     <!-- TODO: Add a 'label' and 'input' for the week's starting date.
                          - label 'for': "week-start-date"
                          - input 'id': "week-start-date", type="date", required -->
@@ -65,9 +66,10 @@
                          <div class="mb-3">
             <label for="week-links" class="form-label">Week Links:</label>
             <textarea id="week-links" class="form-control" rows="3" placeholder="Enter one link per line"></textarea>
-  
             </div>
+                      <div class="form-group">
                       <button type="submit" id="add-week" class="btn btn-outline-dark">Add Week</button>
+                      </div>
                     <!-- TODO: Add a 'button' to submit the form.
                          - id="add-week", type="submit", Text: "Add Week" -->
                 <!-- End of fieldset. -->
@@ -78,12 +80,14 @@
           
                     </fieldset>
         </form>
+  </div>
         </section>
         <!-- Section 2: Existing Weekly Entries -->
         <!-- TODO: Create a 'section' to display the list of current weeks. -->
 <section class="container" style="max-width:700px;">
             <!-- TODO: Add a sub-heading ('h2') "Current Weekly Breakdown". -->
 <h2 class="display-6" >Current Week Breakdown</h2>
+  <div class="mb-3">
             <!-- TODO: Create a 'table' with id "weeks-table". -->
              <table class="table table-striped" id="weeks-table">
                 <!-- TODO: Create a 'thead' and a 'tr' inside it. -->
@@ -118,8 +122,10 @@
                         <td>Week 2: Introduction to CSS</td>
                         <td>Basic styling with CSS</td>
                         <td>
+                          <div class="form-group">
                             <button class="btn btn-outline-dark btn-sm me-2 edit-btn" data-id="week_2">Edit</button>
                             <button class="btn btn-outline-danger btn-sm delete-btn" data-id="week_2">Delete</button>
+                          </div>
 
                         </td>
                     </tr>
@@ -128,6 +134,7 @@
             <!-- End of table. -->
         <!-- End of list section. -->
           </table>
+  </div>
              </section>
     <!-- End of main. -->
      </main>
