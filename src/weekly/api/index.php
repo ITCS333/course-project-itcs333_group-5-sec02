@@ -1,4 +1,10 @@
 <?php
+session_start();
+
+$_SESSION['api_active'] = true;
+
+header("Content-Type: application/json");
+
 /**
  * Weekly Course Breakdown API
  * 
