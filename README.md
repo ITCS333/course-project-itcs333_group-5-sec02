@@ -7,8 +7,12 @@ Zakeya Sayed Qusai Alqassab 202308994
 Sakeenah Sayed Ahmed Shubbar 202303741
 Zainab Sayed Abbas Ahmed Hasan 202309301
 Shaikha Mohammed Hussain Alkhulaqi 202308269
+shaima abdulrahim yusuf haji neya 202308648
 ## A table indicating which student was responsible for which task.
-Shaikha - assignments task
-Zakeya - Weekly task
-sakeenah- task 1 Homepage, Admin Portal & User Management 
+Shaikha - task 4 assignments task
+Zakeya - task 3 Weekly task
+sakeenah- task 1 Homepage, Admin Portal & User Management
+Zainab - task 2 Resources
+shaima - task 5 general discussion boards 
 ## A link to your live, hosted application on Replit.
+https://replit.com/@sakeenahshubbar/ITCS333-Course-Project-2?v=1

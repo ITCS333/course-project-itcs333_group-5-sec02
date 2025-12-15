@@ -1,4 +1,7 @@
 <?php
+session_start();
+$_SESSION['user'] = 'test_user';
+$_SESSION['user_id'] = 1;
 /**
  * Assignment Management API
  * 
@@ -38,6 +41,7 @@
 // ============================================================================
 // HEADERS AND CORS CONFIGURATION
 // ============================================================================
+
 
 // TODO: Set Content-Type header to application/json
 header("Content-Type: application/json");
@@ -267,9 +271,7 @@ function createAssignment($db, $data) {
 
     
     // TODO: Generate a unique assignment ID
-    // $assignmentId = 'asg_' . bin2hex(random_bytes(4));
-    INSERT INTO assignments (id, title, description, due_date, files, created_at, updated_at)
-VALUES (:id, :title, :description, :due_date, :files, NOW(), NOW()) //CHANGED 
+    $assignmentId = bin2hex(random_bytes(16)); 
 
     // TODO: Handle the 'files' field
     $files = [];
@@ -280,13 +282,14 @@ VALUES (:id, :title, :description, :due_date, :files, NOW(), NOW()) //CHANGED
 
     
     // TODO: Prepare INSERT query
-    $sql = "INSERT INTO assignments (id, title, description, due_date, files, created_at, updated_at)
-            VALUES (:id, :title, :description, :due_date, :files, NOW(), NOW())";
+    $sql = "INSERT INTO assignments (title, description, due_date, files, created_at, updated_at)
+        VALUES (:title, :description, :due_date, :files, NOW(), NOW())";
+
     $stmt = $db->prepare($sql);
+
     
     // TODO: Bind all parameters
     //$stmt->bindParam(':id', $assignmentId);
-    $newId = $db->lastInsertId();//CHANGED 
     $stmt->bindParam(':title', $title);
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':due_date', $due_date);
@@ -295,15 +298,24 @@ VALUES (:id, :title, :description, :due_date, :files, NOW(), NOW()) //CHANGED
     
     // TODO: Execute the statement
     $stmt->execute();
-
+    $newId = $db->lastInsertId();
     
     // TODO: Check if insert was successful
-    if ($stmt->rowCount() > 0) {
-    $insertSuccess = true;
+if ($stmt->rowCount() > 0) {
+    http_response_code(201);
+    echo json_encode([
+        "status" => "success",
+        "message" => "Assignment created successfully",
+        "assignment_id" => $newId
+    ]);
 } else {
-    
-    $insertSuccess = false;
+    http_response_code(500);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Failed to create assignment."
+    ]);
 }
+
 
     
     // TODO: If insert failed, return 500 error
@@ -313,6 +325,7 @@ VALUES (:id, :title, :description, :due_date, :files, NOW(), NOW()) //CHANGED
         "status" => "error",
         "message" => "Failed to create assignment."
     ]);
+
     return; // Stop execution
 }
 

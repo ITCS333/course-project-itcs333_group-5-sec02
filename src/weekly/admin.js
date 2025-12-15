@@ -19,8 +19,12 @@ let weeks = [];
 // TODO: Select the week form ('#week-form').
 
 // TODO: Select the weeks table body ('#weeks-tbody').
-let form = document.getElementById("week-form");
-let tbody = document.getElementById("weeks-tbody");
+const form = document.getElementById("week-form");
+const tbody = document.getElementById("weeks-tbody");
+const titleInput = document.getElementById("week-title");
+const startDateInput = document.getElementById("week-start-date");
+const descInput = document.getElementById("week-description");
+const linksInput = document.getElementById("week-links");
 
 // --- Functions ---
 
@@ -37,33 +41,34 @@ let tbody = document.getElementById("weeks-tbody");
 function createWeekRow(week) {
   // ... your implementation here ...
   // 
-let tr=document.createElement("tr");
+const tr = document.createElement("tr");
 
-let tdtitle=document.createElement("td");
-tdtitle.textContent=week.title;
+  const tdTitle = document.createElement("td");
+  tdTitle.textContent = week.title;
 
-let tddescription=document.createElement("td");
-tddescription.textContent=week.description;
+  const tdDesc = document.createElement("td");
+  tdDesc.textContent = week.description || "No description";
 
-let tdbutton=document.createElement("td");
-let editbutton=document.createElement("button");
-editbutton.textContent="Edit";
-editbutton.classList.add("edit-btn");
-editbutton.setAttribute("data-id", week.id);
+  const tdActions = document.createElement("td");
 
-let deletebutton=document.createElement("button");
-deletebutton.textContent="delete";
-deletebutton.classList.add("delete-btn");
-deletebutton.setAttribute("data-id" , week.id);
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit";
+  editBtn.className = "btn btn-outline-dark btn-sm me-2 edit-btn";
+  editBtn.dataset.id = week.id;
 
-tdbutton.appendChild(editbutton);
-tdbutton.appendChild(deletebutton);
+ const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.className = "btn btn-outline-danger btn-sm delete-btn";
+  deleteBtn.dataset.id = week.id;
 
-tr.appendChild(tdtitle);
-tr.appendChild(tddescription);
-tr.appendChild(tdbutton);
+  tdActions.appendChild(editBtn);
+  tdActions.appendChild(deleteBtn);
 
-return tr;
+  tr.appendChild(tdTitle);
+  tr.appendChild(tdDesc);
+  tr.appendChild(tdActions);
+
+  return tr;
 }
 
 /**
@@ -76,11 +81,10 @@ return tr;
  */
 function renderTable() {
   // ... your implementation here ...
- tbody.innerHTML = ""; 
-  for(let i=0  ; i<weeks.length ; i++){
-let weekrow = createWeekRow(weeks[i]);
-tbody.appendChild(weekrow);
-  }
+ tbody.innerHTML = "";
+  weeks.forEach(week => {
+    tbody.appendChild(createWeekRow(week));
+  });
 }
 
 /**
@@ -100,24 +104,31 @@ function handleAddWeek(event) {
   // ... your implementation here ...
   event.preventDefault();
 
-    let t = document.getElementById('week-title').value.trim();
-    let sd = document.getElementById('week-start-date').value;
-    let d = document.getElementById('week-description').value.trim();
+  const title = titleInput.value.trim();
+  const startDate = startDateInput.value;
+  const description = descInput.value.trim();
 
-    let weekslink = document.getElementById('week-links').value;
-    let links1 = weekslink.split('\n');
+  if (!title || !startDate){
+    alert("Title and start date are required!");
+        return;
+  }
 
-    let newweek = {
-      id : `week_${Date.now()}` ,
-      title : t ,
-      startDate : sd ,
-      description : d ,
-      links : links1
-     };
+  const links = linksInput.value
+    .split("\n")
+    .map(l => l.trim())
+    .filter(l => l !== "");
 
-weeks.push(newweek);
+  const newWeek = {
+    id: `week_${Date.now()}`,
+    title,
+    startDate,
+    description,
+    links
+  };
+
+weeks.push(newWeek);
 renderTable();
-event.target.reset();
+form.reset();
     }
 
 
@@ -133,12 +144,27 @@ event.target.reset();
  */
 function handleTableClick(event) {
   // ... your implementation here ...
-  if(event.target.classList.contains('delete-btn')){
-    let weekId = event.target.getAttribute('data-id');
-    weeks = weeks.filter(week => week.id!==weekId);
-      renderTable();
+  const id = event.target.dataset.id;
+if (!id) return;
+  // DELETE
+  if (event.target.classList.contains("delete-btn")) {
+    if (confirm("Are you sure you want to delete this week?")) {
+    weeks = weeks.filter(w => w.id !== id);
+    renderTable();
   }
+  }
+  if (event.target.classList.contains("edit-btn")) {
+    const week = weeks.find(w => w.id === id);
+    if (!week) return;
+titleInput.value = week.title;
+    startDateInput.value = week.startDate;
+    descInput.value = week.description || "";
+    linksInput.value = (week.links || []).join("\n");
 
+    // remove old version, will be replaced on submit
+    weeks = weeks.filter(w => w.id !== id);
+    renderTable();
+  }
 }
 
 /**
@@ -153,13 +179,21 @@ function handleTableClick(event) {
  */
 async function loadAndInitialize() {
   // ... your implementation here ...
-  let response = await fetch('weeks.json');
-  weeks= await response.json();
+  try {
+    const response = await fetch("../data/weeks.json");
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+     weeks = await response.json();
+  } catch (error) {
+    console.error("Error loading weeks:", error);
+    weeks = [];
+    tbody.innerHTML = `<tr><td colspan="3" class="text-danger">Failed to load weeks: ${error.message}</td></tr>`;
+  }
 
   renderTable();
-
-  form.addEventListener('submit', handleAddWeek);
-  tbody.addEventListener('click' , handleTableClick);
+  form.addEventListener("submit", handleAddWeek);
+  tbody.addEventListener("click", handleTableClick);
 }
 
 // --- Initial Page Load ---

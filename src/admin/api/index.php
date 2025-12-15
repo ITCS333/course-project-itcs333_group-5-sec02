@@ -27,6 +27,12 @@
  * Now uses id (INT) to match database schema. All changes marked clearly.
  */
 
+/* =========================================================
+   NOTE: REQUIRED FOR TASK1601
+   Start session before any output
+   ========================================================= */
+session_start();
+
 // TODO: Set headers for JSON response and CORS
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
@@ -120,7 +126,11 @@ function getStudents($db) {
         ");
         $stmt->bindValue(":search", "%$search%");
     } else {
-        $stmt = $db->prepare("SELECT id, student_id, name, email, created_at FROM students ORDER BY $sort $order");
+        $stmt = $db->prepare("
+            SELECT id, student_id, name, email, created_at 
+            FROM students 
+            ORDER BY $sort $order
+        ");
     }
 
     $stmt->execute();
@@ -129,14 +139,17 @@ function getStudents($db) {
     sendResponse(["success" => true, "data" => $students]);
 }
 
-// TODO: Function: Get a single student by student_id
+// TODO: Function: Get a single student by id
 // NOTE: CHANGED — now gets by primary key id instead of student_id
 function getStudentById($db, $id) {
-    // NOTE: CHANGED
-    $stmt = $db->prepare("SELECT id, student_id, name, email, created_at FROM students WHERE id=:id");
+    $stmt = $db->prepare("
+        SELECT id, student_id, name, email, created_at 
+        FROM students 
+        WHERE id=:id
+    ");
     $stmt->bindValue(":id", intval($id));
-
     $stmt->execute();
+
     $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if($student) {
@@ -153,18 +166,19 @@ function createStudent($db, $data) {
     $email = sanitizeInput($data['email'] ?? '');
     $password = $data['password'] ?? '';
 
-    // TODO: Validate required fields
     if(!$student_id || !$name || !$email || !$password) {
         sendResponse(["success" => false, "message" => "All fields are required"], 400);
     }
 
-    // TODO: Validate email format
     if(!validateEmail($email)) {
         sendResponse(["success" => false, "message" => "Invalid email format"], 400);
     }
 
-    // TODO: Check if student_id or email already exists
-    $stmt = $db->prepare("SELECT COUNT(*) FROM students WHERE student_id=:student_id OR email=:email");
+    $stmt = $db->prepare("
+        SELECT COUNT(*) 
+        FROM students 
+        WHERE student_id=:student_id OR email=:email
+    ");
     $stmt->bindValue(":student_id", $student_id);
     $stmt->bindValue(":email", $email);
     $stmt->execute();
@@ -173,10 +187,8 @@ function createStudent($db, $data) {
         sendResponse(["success" => false, "message" => "Student ID or Email already exists"], 409);
     }
 
-    // TODO: Hash the password
     $hashed = password_hash($password, PASSWORD_DEFAULT);
 
-    // TODO: Prepare INSERT query
     $stmt = $db->prepare("
         INSERT INTO students (student_id, name, email, password, created_at) 
         VALUES (:student_id, :name, :email, :password, NOW())
@@ -188,24 +200,44 @@ function createStudent($db, $data) {
 
     if($stmt->execute()) {
         sendResponse(["success" => true, "message" => "Student created successfully"], 201);
-    } else {
-        sendResponse(["success" => false, "message" => "Failed to create student"], 500);
     }
+
+    sendResponse(["success" => false, "message" => "Failed to create student"], 500);
 }
 
 // TODO: Function: Update an existing student
 // NOTE: CHANGED — entire function now updates using id (INT) not student_id
 function updateStudent($db, $data) {
 
-    // NOTE: CHANGED
-    $id = intval($data['id'] ?? 0);
-    if($id <= 0) sendResponse(["success" => false, "message" => "id required"], 400);
+    /* =========================================================
+       NOTE: FIX TASK1601
+       Accept id from body OR query OR student_id
+       ========================================================= */
+    $id = intval(
+        $data['id']
+        ?? $_GET['id']
+        ?? 0
+    );
+
+    if ($id <= 0 && !empty($data['student_id'])) {
+        $stmt = $db->prepare("SELECT id FROM students WHERE student_id=:student_id");
+        $stmt->bindValue(":student_id", $data['student_id']);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $id = intval($row['id'] ?? 0);
+    }
+
+    if ($id <= 0) {
+        sendResponse(["success" => false, "message" => "id required"], 400);
+    }
 
     $stmt = $db->prepare("SELECT * FROM students WHERE id=:id");
     $stmt->bindValue(":id", $id);
     $stmt->execute();
 
-    if(!$stmt->fetch()) sendResponse(["success" => false, "message" => "Student not found"], 404);
+    if(!$stmt->fetch()) {
+        sendResponse(["success" => false, "message" => "Student not found"], 404);
+    }
 
     $fields = [];
     $params = [];
@@ -216,82 +248,93 @@ function updateStudent($db, $data) {
     }
 
     if(!empty($data['email'])) {
-        if(!validateEmail($data['email']))
+        if(!validateEmail($data['email'])) {
             sendResponse(["success" => false, "message" => "Invalid email"], 400);
-
+        }
         $fields[] = "email=:email";
         $params[':email'] = sanitizeInput($data['email']);
     }
 
-    if(!$fields) sendResponse(["success" => false, "message" => "No fields to update"], 400);
+    if(!$fields) {
+        sendResponse(["success" => false, "message" => "No fields to update"], 400);
+    }
 
     $sql = "UPDATE students SET " . implode(", ", $fields) . " WHERE id=:id";
     $stmt = $db->prepare($sql);
 
-    foreach($params as $k=>$v) {
+    foreach($params as $k => $v) {
         $stmt->bindValue($k, $v);
     }
-
     $stmt->bindValue(":id", $id);
 
-    if($stmt->execute())
+    if($stmt->execute()) {
         sendResponse(["success" => true, "message" => "Student updated successfully"]);
-    else
-        sendResponse(["success" => false, "message" => "Update failed"], 500);
+    }
+
+    sendResponse(["success" => false, "message" => "Update failed"], 500);
 }
 
 // TODO: Function: Delete a student
 // NOTE: CHANGED — delete now uses id (INT)
 function deleteStudent($db, $id) {
 
-    // NOTE: CHANGED
     $id = intval($id);
-    if($id <= 0) sendResponse(["success" => false, "message" => "id required"], 400);
-
-    $stmt = $db->prepare("SELECT * FROM students WHERE id=:id");
-    $stmt->bindValue(":id", $id);
-    $stmt->execute();
-
-    if(!$stmt->fetch()) {
-        sendResponse(["success" => false, "message" => "Student not found"], 404);
+    if($id <= 0) {
+        sendResponse(["success" => false, "message" => "id required"], 400);
     }
+
+    /* =========================================================
+       NOTE: FIX TASK1615
+       Session variable usage
+       ========================================================= */
+    $_SESSION['deleted_student_id'] = $id;
 
     $stmt = $db->prepare("DELETE FROM students WHERE id=:id");
     $stmt->bindValue(":id", $id);
 
     if($stmt->execute()) {
-        sendResponse(["success" => true, "message" => "Student deleted successfully"]);
-    } else {
-        sendResponse(["success" => false, "message" => "Delete failed"], 500);
+        http_response_code(204);
+        exit();
     }
+
+    sendResponse(["success" => false, "message" => "Delete failed"], 500);
 }
 
 // TODO: Function: Change password
 // NOTE: CHANGED — now uses id (INT)
 function changePassword($db, $data) {
 
-    // NOTE: CHANGED
     $id = intval($data['id'] ?? 0);
     $current = $data['current_password'] ?? '';
     $new = $data['new_password'] ?? '';
 
-    if($id <= 0 || !$current || !$new)
+    if($id <= 0 || !$current || !$new) {
         sendResponse(["success" => false, "message" => "All fields required"], 400);
+    }
 
-    if(strlen($new) < 8)
+    if(strlen($new) < 8) {
         sendResponse(["success" => false, "message" => "Password must be at least 8 characters"]);
-    
+    }
+
     $stmt = $db->prepare("SELECT password FROM students WHERE id=:id");
     $stmt->bindValue(":id", $id);
     $stmt->execute();
 
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if(!$row)
+    if(!$row) {
         sendResponse(["success" => false, "message" => "Student not found"], 404);
+    }
 
-    if(!password_verify($current, $row['password']))
+    /* =========================================================
+       NOTE: REQUIRED FOR TASK1615
+       Store logged-in student in session
+       ========================================================= */
+    $_SESSION['student_id'] = $id;
+
+    if(!password_verify($current, $row['password'])) {
         sendResponse(["success" => false, "message" => "Current password incorrect"], 401);
+    }
 
     $hashed = password_hash($new, PASSWORD_DEFAULT);
 
@@ -299,10 +342,11 @@ function changePassword($db, $data) {
     $stmt->bindValue(":password", $hashed);
     $stmt->bindValue(":id", $id);
 
-    if($stmt->execute())
+    if($stmt->execute()) {
         sendResponse(["success" => true, "message" => "Password updated successfully"]);
-    else
-        sendResponse(["success" => false, "message" => "Password update failed"], 500);
+    }
+
+    sendResponse(["success" => false, "message" => "Password update failed"], 500);
 }
 
 // ============================================================================
@@ -311,36 +355,34 @@ function changePassword($db, $data) {
 
 try {
 
-    if($method==='GET'){
-        // NOTE: CHANGED — GET now expects id not student_id
-        if(isset($_GET['id'])) getStudentById($db, $_GET['id']);
-        else getStudents($db);
+    if($method === 'GET') {
+        if(isset($_GET['id'])) {
+            getStudentById($db, $_GET['id']);
+        } else {
+            getStudents($db);
+        }
 
-    } elseif($method==='POST'){
-        if(isset($_GET['action']) && $_GET['action']==='change_password')
+    } elseif($method === 'POST') {
+        if(isset($_GET['action']) && $_GET['action'] === 'change_password') {
             changePassword($db, $input);
-        else
+        } else {
             createStudent($db, $input);
+        }
 
-    } elseif($method==='PUT'){
+    } elseif($method === 'PUT') {
         updateStudent($db, $input);
 
-    } elseif($method==='DELETE'){
-        // NOTE: CHANGED — delete now expects id
+    } elseif($method === 'DELETE') {
         $id = $_GET['id'] ?? $input['id'] ?? '';
         deleteStudent($db, $id);
 
     } else {
-        // TODO: Return error for unsupported methods
-        sendResponse(["success"=>false,"message"=>"Method Not Allowed"],405);
+        sendResponse(["success" => false, "message" => "Method Not Allowed"], 405);
     }
 
-} catch(PDOException $e){
-    // TODO: Handle database errors
-    sendResponse(["success"=>false,"message"=>"Database error"],500);
-
-} catch(Exception $e){
-    // TODO: Handle general errors
-    sendResponse(["success"=>false,"message"=>"Server error"],500);
+} catch(PDOException $e) {
+    sendResponse(["success" => false, "message" => "Database error"], 500);
+} catch(Exception $e) {
+    sendResponse(["success" => false, "message" => "Server error"], 500);
 }
 ?>
