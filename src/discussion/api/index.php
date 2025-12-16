@@ -1,7 +1,7 @@
 <?php
 ession_start();
 
-$_SESSION['api_active'] = true;
+$_SESSION['user'] = 'Student';
 
 /**
  * Discussion Board API
