@@ -20,7 +20,7 @@ let topics = [];
 const newTopicForm = document.getElementById('new-topic-form');
 
 // TODO: Select the topic list container ('#topic-list-container').
-const topicListContainer = document.getElementById('topics-list-container');
+const topicListContainer = document.getElementById('topic-list-container');
 
 // --- Functions ---
 
