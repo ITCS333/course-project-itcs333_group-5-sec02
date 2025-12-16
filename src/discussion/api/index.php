@@ -1,4 +1,8 @@
 <?php
+ession_start();
+
+$_SESSION['api_active'] = true;
+
 /**
  * Discussion Board API
  * 
