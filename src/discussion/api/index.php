@@ -1,7 +1,8 @@
 <?php
-ession_start();
 
-$_SESSION['user'] = 'Student';
+session_start();
+$_SESSION['user'] = $userData;
+
 
 /**
  * Discussion Board API
