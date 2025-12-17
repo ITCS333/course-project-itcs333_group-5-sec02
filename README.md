@@ -3,16 +3,16 @@
 # ITCS### Course Page
 ITCS333 Course Page
 ## The names and student IDs of all team members.
-Zakeya Sayed Qusai Alqassab 202308994
-Sakeenah Sayed Ahmed Shubbar 202303741
-Zainab Sayed Abbas Ahmed Hasan 202309301
-Shaikha Mohammed Hussain Alkhulaqi 202308269
+Zakeya Sayed Qusai Alqassab 202308994<br/>
+Sakeenah Sayed Ahmed Shubbar 202303741<br/>
+Zainab Sayed Abbas Ahmed Hasan 202309301<br/>
+Shaikha Mohammed Hussain Alkhulaqi 202308269<br/>
 shaima abdulrahim yusuf haji neya 202308648
 ## A table indicating which student was responsible for which task.
-Shaikha - task 4 assignments task
-Zakeya - task 3 Weekly task
-sakeenah- task 1 Homepage, Admin Portal & User Management
-Zainab - task 2 Resources
+Shaikha - task 4 assignments task<br/>
+Zakeya - task 3 Weekly task<br/>
+sakeenah- task 1 Homepage, Admin Portal & User Management<br/>
+Zainab - task 2 Resources <br/>
 shaima - task 5 general discussion boards 
 ## A link to your live, hosted application on Replit.
 https://replit.com/@sakeenahshubbar/ITCS333-Course-Project-4?v=1
